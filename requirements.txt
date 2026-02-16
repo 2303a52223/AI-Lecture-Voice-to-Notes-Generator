@@ -1,32 +1,12 @@
 # Core Framework
-streamlit==1.31.0
-streamlit-lottie==0.0.5
-
-# AI/ML Libraries
+streamlit>=1.31.0
 assemblyai
-# openai-whisper==20231117  # Replaced by AssemblyAI
-# torch==2.1.2
-# torchaudio==2.1.2
-transformers==4.36.2
-sentencepiece==0.1.99
-accelerate==0.25.0
 
 # NLP Processing
-nltk==3.8.1
-spacy==3.7.2
-textstat==0.7.3
+nltk
+textstat
 
-# Audio Processing
-pydub==0.25.1
-librosa==0.10.1
-soundfile==0.12.1
-
-# Data Processing
-pandas==2.1.4
-numpy==1.26.2
-
-# Visualization
-plotly==5.18.0
-matplotlib==3.8.2
-seaborn==0.13.1
-wordcloud==1.9.3
+# Data & Visualization
+pandas
+plotly
+matplotlib
