@@ -133,6 +133,7 @@ if st.session_state.quiz_questions:
                     answer = st.radio(
                         f"Select your answer",
                         options=options,
+                        index=None,
                         key=f"q_{i}",
                         label_visibility="collapsed"
                     )
@@ -142,6 +143,7 @@ if st.session_state.quiz_questions:
                 answer = st.radio(
                     f"Select your answer",
                     options=['True', 'False'],
+                    index=None,
                     key=f"q_{i}",
                     label_visibility="collapsed"
                 )
