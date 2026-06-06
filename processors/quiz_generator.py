@@ -6,6 +6,8 @@ import random
 import re
 from nltk.tokenize import sent_tokenize
 import nltk
+from utils.retry import retry_call
+from utils.error_handler import report_error
 
 class QuizGenerator:
     """Generates quizzes and flashcards from text"""
@@ -20,7 +22,7 @@ class QuizGenerator:
                 nltk.download('punkt_tab', quiet=True)
                 nltk.download('averaged_perceptron_tagger_eng', quiet=True)
     
-    def generate_quiz(self, text, num_questions=10, difficulty="medium"):
+    def generate_quiz(self, text, num_questions=10, difficulty="medium", question_types=None):
         """
         Generate quiz from text
         
@@ -42,23 +44,42 @@ class QuizGenerator:
                 st.warning(f"Text too short. Generating {len(sentences)} questions instead.")
                 num_questions = len(sentences)
             
+            if question_types is None:
+                question_types = ['multiple_choice', 'true_false', 'fill_blank']
+
             # Generate different types of questions
             questions = []
             
-            # Multiple choice questions (60%)
-            num_mcq = int(num_questions * 0.6)
-            mcq_questions = self._generate_mcq(sentences, num_mcq, difficulty)
-            questions.extend(mcq_questions)
-            
-            # True/False questions (20%)
-            num_tf = int(num_questions * 0.2)
-            tf_questions = self._generate_true_false(sentences, num_tf)
-            questions.extend(tf_questions)
-            
-            # Fill in the blank questions (20%)
-            num_fib = num_questions - len(questions)
-            fib_questions = self._generate_fill_blank(sentences, num_fib)
-            questions.extend(fib_questions)
+            requested = [qt for qt in question_types if qt in ['multiple_choice', 'true_false', 'fill_blank']]
+            if not requested:
+                requested = ['multiple_choice']
+
+            # Balanced distribution over selected types.
+            base_count = max(1, num_questions // len(requested))
+            remaining = num_questions
+
+            if 'multiple_choice' in requested:
+                count = min(remaining, base_count)
+                mcq_questions = self._generate_mcq(sentences, count, difficulty)
+                questions.extend(mcq_questions)
+                remaining = max(0, remaining - len(mcq_questions))
+
+            if 'true_false' in requested and remaining > 0:
+                count = min(remaining, base_count)
+                tf_questions = self._generate_true_false(sentences, count)
+                questions.extend(tf_questions)
+                remaining = max(0, remaining - len(tf_questions))
+
+            if 'fill_blank' in requested and remaining > 0:
+                count = min(remaining, base_count + remaining)
+                fib_questions = self._generate_fill_blank(sentences, count)
+                questions.extend(fib_questions)
+                remaining = max(0, remaining - len(fib_questions))
+
+            # Backfill with MCQ if fewer questions were generated than requested.
+            if len(questions) < num_questions:
+                backfill = self._generate_mcq(sentences, num_questions - len(questions), difficulty)
+                questions.extend(backfill)
             
             # Shuffle questions
             random.shuffle(questions)
@@ -270,7 +291,7 @@ class QuizGenerator:
             
             random.shuffle(candidate_sentences)
             
-            for sentence in candidate_sentences[:num_cards]:
+            for sentence in candidate_sentences[:num_cards * 3]:
                 # Extract question and answer from sentence
                 words = sentence.split()
                 
@@ -292,10 +313,28 @@ class QuizGenerator:
                         "back": back,
                         "topic": key_term
                     })
+
+                if len(flashcards) >= num_cards:
+                    break
+
+            # Fallback if strict term extraction produced too few cards.
+            if len(flashcards) < num_cards:
+                for sentence in candidate_sentences:
+                    sentence = sentence.strip()
+                    if not sentence:
+                        continue
+                    first_words = " ".join(sentence.split()[:6]).strip('.,!?;:')
+                    flashcards.append({
+                        "front": f"Explain: {first_words}...",
+                        "back": sentence,
+                        "topic": "General"
+                    })
+                    if len(flashcards) >= num_cards:
+                        break
             
             st.success(f"✅ Generated {len(flashcards)} flashcards!")
             
-            return flashcards
+            return flashcards[:num_cards]
             
         except Exception as e:
             st.error(f"Error generating flashcards: {e}")
@@ -341,3 +380,104 @@ class QuizGenerator:
         except Exception as e:
             st.error(f"Error grading quiz: {e}")
             return None
+
+    def export_to_anki(self, flashcards, deck_name="Lecture Notes"):
+        """
+        Export flashcards to Anki format (.apkg)
+        
+        Args:
+            flashcards: List of flashcard dicts with 'front' and 'back'
+            deck_name: Name for the Anki deck
+            
+        Returns:
+            bytes: .apkg file content or None if failed
+        """
+        try:
+            import genanki
+            import random
+            import tempfile
+            import os
+            
+            def _build_and_write():
+                # Create deck
+                deck = genanki.Deck(random.randint(1e16, 9e16), deck_name)
+
+                # Create model
+                model = genanki.Model(
+                    random.randint(1e16, 9e16),
+                    'Basic',
+                    fields=[
+                        {'name': 'Front'},
+                        {'name': 'Back'}
+                    ],
+                    templates=[
+                        {
+                            'name': 'Card 1',
+                            'qfmt': '{{Front}}',
+                            'afmt': '{{FrontSide}}<hr id=answer>{{Back}}'
+                        }
+                    ]
+                )
+
+                # Add cards
+                for card in flashcards:
+                    note = genanki.Note(
+                        model=model,
+                        fields=[card.get('front', ''), card.get('back', '')]
+                    )
+                    deck.add_notes(note)
+
+                # Package deck
+                package = genanki.Package(deck)
+
+                # Create temporary file and export
+                with tempfile.NamedTemporaryFile(delete=False, suffix='.apkg') as tmp:
+                    tmp_path = tmp.name
+
+                try:
+                    retry_call(lambda: package.write_to_file(tmp_path), tries=3, delay=0.5, backoff=2.0)
+
+                    # Read file content
+                    with open(tmp_path, 'rb') as f:
+                        return f.read()
+                finally:
+                    try:
+                        os.unlink(tmp_path)
+                    except Exception:
+                        pass
+
+            return retry_call(_build_and_write, tries=2, delay=0.5, backoff=2.0)
+            
+        except ImportError:
+            st.error("genanki library not installed. Install with: pip install genanki")
+            return None
+        except Exception as e:
+            report_error(e, "Error exporting to Anki", user_facing=True)
+            return None
+
+    def export_flashcards_csv(self, flashcards):
+        """
+        Export flashcards to CSV format for manual import
+        
+        Returns:
+            str: CSV content
+        """
+        import csv
+        import io
+        
+        output = io.StringIO()
+        writer = csv.writer(output)
+        
+        # Header
+        writer.writerow(['Front', 'Back', 'Topic', 'Difficulty'])
+        
+        # Cards
+        for card in flashcards:
+            writer.writerow([
+                card.get('front', ''),
+                card.get('back', ''),
+                card.get('topic', ''),
+                card.get('difficulty', 'medium')
+            ])
+        
+        return output.getvalue()

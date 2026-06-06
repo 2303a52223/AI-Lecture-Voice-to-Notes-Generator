@@ -7,6 +7,7 @@ from utils.state_manager import StateManager
 from utils.file_handler import FileHandler
 from utils.helpers import format_file_size
 from components.sidebar import render_sidebar
+from utils.error_handler import get_recent_errors
 
 # Page config
 st.set_page_config(
@@ -24,20 +25,40 @@ if css_file.exists():
 # Initialize
 state_manager = StateManager()
 file_handler = FileHandler()
+saved_settings = state_manager.get_settings()
+
+if "app_background_color" not in st.session_state:
+    st.session_state.app_background_color = saved_settings.get("app_background_color", "#F8FAFC")
 
 # Sidebar
 render_sidebar()
 
-# Main content
-st.title("⚙️ Settings")
-st.markdown("Configure your Lecture Voice-to-Notes Generator.")
+# Main content - Hero
+st.markdown(
+    """
+    <section class='page-hero'>
+        <div class='page-hero-badge'>⚙️ Settings</div>
+        <h1>Configure Your Workspace</h1>
+        <p class='page-hero-copy'>Customize transcription, summarization, quiz generation, privacy controls, and data management settings.</p>
+    </section>
+    """,
+    unsafe_allow_html=True,
+)
 
 st.divider()
 
 # Tabs
-tab1, tab2, tab3, tab4 = st.tabs(["🎤 Transcription", "📝 Summary", "❓ Quiz", "💾 Data"])
+tab1, tab2, tab3, tab4, tab5, tab6 = st.tabs([
+    "🎤 Transcription",
+    "📝 Summary",
+    "❓ Quiz",
+    "🔒 Privacy",
+    "💾 Data",
+    "🎨 Appearance",
+])
 
 with tab1:
+    st.markdown("<div class='pack-card'>", unsafe_allow_html=True)
     st.subheader("Transcription Settings")
     
     # AssemblyAI configuration
@@ -67,7 +88,10 @@ with tab1:
     )
     st.session_state.default_language = default_language
 
+st.markdown("</div>", unsafe_allow_html=True)
+
 with tab2:
+    st.markdown("<div class='pack-card'>", unsafe_allow_html=True)
     st.subheader("Summary Settings")
     
     # Summary style
@@ -106,7 +130,10 @@ with tab2:
             "Install with: `pip install transformers torch`"
         )
 
+st.markdown("</div>", unsafe_allow_html=True)
+
 with tab3:
+    st.markdown("<div class='pack-card'>", unsafe_allow_html=True)
     st.subheader("Quiz Settings")
     
     # Default quiz options
@@ -131,7 +158,114 @@ with tab3:
     )
     st.session_state.default_question_types = default_question_types
 
+st.markdown("</div>", unsafe_allow_html=True)
+
 with tab4:
+    st.markdown("<div class='pack-card'>", unsafe_allow_html=True)
+    st.subheader("Privacy & Model Settings")
+    
+    st.markdown("### 🔒 Privacy Controls")
+    
+    # Auto-delete audio
+    auto_delete_audio = st.checkbox(
+        "Auto-delete raw audio after transcription",
+        value=False,
+        help="Automatically remove uploaded audio files after successful transcription to save space"
+    )
+    st.session_state.auto_delete_audio = auto_delete_audio
+    
+    # Encryption option
+    enable_encryption = st.checkbox(
+        "Enable local data encryption (beta)",
+        value=False,
+        help="Encrypt sensitive data in the local database"
+    )
+    st.session_state.enable_encryption = enable_encryption
+    
+    st.divider()
+    
+    st.markdown("### 🎤 Transcription Model")
+    
+    transcriber_choice = st.radio(
+        "Select transcriber",
+        options=["Local (faster-whisper)", "Online API (AssemblyAI)"],
+        index=0,
+        help="Choose between local offline transcription or cloud-based API"
+    )
+    st.session_state.transcriber_choice = transcriber_choice
+    
+    if transcriber_choice == "Local (faster-whisper)":
+        st.info(
+            "✅ Using **faster-whisper** for local, offline transcription\n\n"
+            "- **Privacy**: All processing happens locally\n"
+            "- **Speed**: GPU/CPU fallback supported\n"
+            "- **Models**: tiny, base, small, medium, large\n"
+            "- **Download**: Models cached locally under `models/`"
+        )
+        
+        model_size = st.selectbox(
+            "Model size (larger = more accurate but slower)",
+            options=['tiny', 'base', 'small', 'medium', 'large'],
+            index=2,  # default to 'small'
+            help="Smaller models are faster, larger models are more accurate"
+        )
+        st.session_state.whisper_model = model_size
+        
+        # Device selection
+        device = st.radio(
+            "Processing device",
+            options=["Auto-detect", "CPU", "GPU"],
+            index=0
+        )
+        st.session_state.whisper_device = device
+        
+    else:
+        st.info(
+            "Using **AssemblyAI API** for transcription\n\n"
+            "- **Models**: universal-3-pro, universal-2\n"
+            "- **Languages**: Supports all major languages\n"
+            "- **Requires**: Internet connection and API key"
+        )
+    
+    st.divider()
+    
+    st.markdown("### 📊 Model Cache")
+    
+    # Model cache info
+    models_dir = Path("models")
+    if models_dir.exists():
+        cached_files = list(models_dir.glob('**/*'))
+        cached_size = sum(f.stat().st_size for f in cached_files if f.is_file())
+        st.markdown(f"- **Cached models**: {len([f for f in cached_files if f.is_file()])} files")
+        st.markdown(f"- **Cache size**: {format_file_size(cached_size)}")
+        
+        if st.button("🗑️ Clear model cache"):
+            try:
+                import shutil
+                shutil.rmtree(models_dir)
+                models_dir.mkdir(parents=True, exist_ok=True)
+                st.success("✅ Model cache cleared. Models will be re-downloaded on next use.")
+                st.rerun()
+            except Exception as e:
+                st.error(f"Error clearing cache: {e}")
+    else:
+        st.markdown("- **No cached models** (will be downloaded on first use)")
+    
+    st.divider()
+    
+    st.markdown("### 📥 Data Management")
+    
+    enable_telemetry = st.checkbox(
+        "Enable anonymized telemetry (optional)",
+        value=False,
+        help="Help improve the app by sending anonymized usage statistics"
+    )
+    st.session_state.enable_telemetry = enable_telemetry
+
+st.markdown("</div>", unsafe_allow_html=True)
+
+with tab5:
+    st.markdown("<div class='pack-card'>", unsafe_allow_html=True)
     st.subheader("Data Management")
     
     # Storage info
@@ -203,6 +337,33 @@ with tab4:
                 st.session_state.confirm_delete = False
                 st.rerun()
 
+st.markdown("</div>", unsafe_allow_html=True)
+
+with tab6:
+    st.markdown("<div class='pack-card'>", unsafe_allow_html=True)
+    st.subheader("Appearance")
+
+    st.markdown("### Background")
+    selected_background = st.color_picker(
+        "Choose app background color",
+        value=st.session_state.app_background_color,
+        help="Applies to all pages in the app."
+    )
+
+    if selected_background != st.session_state.app_background_color:
+        st.session_state.app_background_color = selected_background
+        state_manager.update_settings({"app_background_color": selected_background})
+        st.success("✅ Background color updated.")
+        st.rerun()
+
+    if st.button("Reset background color", key="reset_app_background"):
+        st.session_state.app_background_color = "#F8FAFC"
+        state_manager.update_settings({"app_background_color": "#F8FAFC"})
+        st.success("✅ Background color reset to default.")
+        st.rerun()
+
+st.markdown("</div>", unsafe_allow_html=True)
+
 st.divider()
 
 # System info
@@ -247,3 +408,21 @@ with st.expander("ℹ️ System Information"):
             st.markdown(f"- ✅ **{name}**: {version}")
         except ImportError:
             st.markdown(f"- ❌ **{name}**: Not installed")
+
+    # Recent error logs (admin)
+    with st.expander("🛠️ Recent Errors (admin)"):
+        errors = get_recent_errors(50)
+        if not errors:
+            st.markdown("- No recent errors recorded.")
+        else:
+            for err in errors:
+                ts = err.get('timestamp', '')
+                eid = err.get('id', '')
+                ctx = err.get('context', '')
+                msg = err.get('message', '')
+                header = f"{ts} — {eid} — {ctx}"
+                with st.expander(header):
+                    st.markdown(f"**Message:** {msg}")
+                    st.markdown("**Traceback (truncated):**")
+                    tb = err.get('traceback', '')
+                    st.code('\n'.join(tb.splitlines()[:200]))

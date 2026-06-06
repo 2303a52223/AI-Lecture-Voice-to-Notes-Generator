@@ -40,7 +40,7 @@ def render_word_frequency_chart(word_freq_data: list[dict[str, Any]]) -> None:
         yaxis={'categoryorder': 'total ascending'}
     )
     
-    st.plotly_chart(fig, use_container_width=True)
+    st.plotly_chart(fig, width="stretch")
 
 def render_readability_gauge(readability_score: float) -> None:
     """
@@ -73,7 +73,7 @@ def render_readability_gauge(readability_score: float) -> None:
     ))
     
     fig.update_layout(height=300)
-    st.plotly_chart(fig, use_container_width=True)
+    st.plotly_chart(fig, width="stretch")
 
 def render_word_cloud(text: str, title: str = "Word Cloud") -> None:
     """
@@ -158,7 +158,7 @@ def render_lecture_timeline(lectures: list[dict[str, Any]]) -> None:
         yaxis_title='Duration (seconds)'
     )
     
-    st.plotly_chart(fig, use_container_width=True)
+    st.plotly_chart(fig, width="stretch")
 
 def render_analytics_dashboard(analytics: dict[str, Any], lectures: list[dict[str, Any]]) -> None:
     """
@@ -228,7 +228,7 @@ def render_analytics_dashboard(analytics: dict[str, Any], lectures: list[dict[st
             )
             
             fig.update_layout(height=350)
-            st.plotly_chart(fig, use_container_width=True)
+            st.plotly_chart(fig, width="stretch")
 
 def render_quiz_results_chart(results: dict[str, Any]) -> None:
     """
@@ -253,7 +253,7 @@ def render_quiz_results_chart(results: dict[str, Any]) -> None:
         showlegend=True
     )
     
-    st.plotly_chart(fig, use_container_width=True)
+    st.plotly_chart(fig, width="stretch")
 
 def render_text_stats_chart(stats: dict[str, Any]) -> None:
     """

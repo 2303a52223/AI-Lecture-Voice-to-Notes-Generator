@@ -8,6 +8,8 @@ from datetime import datetime
 from threading import Thread
 
 import assemblyai as aai
+from utils.retry import retry_call
+from utils.error_handler import report_error
 
 # Set AssemblyAI API key
 ASSEMBLYAI_API_KEY = "5116de72718b42b799f959b7969fcdd6"
@@ -65,9 +67,20 @@ class Transcriber:
         
         def _run_transcription():
             try:
-                transcriber = aai.Transcriber(config=config)
-                result_holder["transcript"] = transcriber.transcribe(str(audio_path))
+                transcriber = retry_call(
+                    lambda: aai.Transcriber(config=config),
+                    tries=3,
+                    delay=1.0,
+                    backoff=2.0
+                )
+                result_holder["transcript"] = retry_call(
+                    lambda: transcriber.transcribe(str(audio_path)),
+                    tries=3,
+                    delay=1.0,
+                    backoff=2.0
+                )
             except Exception as e:
+                report_error(e, f"AssemblyAI transcription failed for {audio_path}", user_facing=False)
                 result_holder["error"] = e
         
         thread = Thread(target=_run_transcription)
@@ -91,7 +104,9 @@ class Transcriber:
         transcript = result_holder["transcript"]
         
         if transcript.status == aai.TranscriptStatus.error:
-            raise RuntimeError(f"Transcription failed: {transcript.error}")
+            err = RuntimeError(f"Transcription failed: {transcript.error}")
+            report_error(err, f"AssemblyAI returned error status for {audio_path}", user_facing=False)
+            raise err
         
         elapsed_time = time.time() - start_time
         

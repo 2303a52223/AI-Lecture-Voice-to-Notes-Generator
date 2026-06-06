@@ -64,7 +64,8 @@ An AI-powered study assistant that converts lecture audio recordings into compre
 │   ├── 03_📊_Summary.py    # View summaries & notes
 │   ├── 04_❓_Quiz.py       # Take auto-generated quizzes
 │   ├── 05_📈_Analytics.py  # Learning analytics dashboard
-│   └── 06_⚙️_Settings.py  # App configuration
+│   ├── 06_⚙️_Settings.py   # App configuration
+│   └── 07_📦_Study_Packs.py # Download PDFs and Anki decks
 ├── processors/             # Core processing modules
 │   ├── transcriber.py      # AssemblyAI transcription
 │   ├── summarizer.py       # Text summarization
@@ -101,6 +102,18 @@ An AI-powered study assistant that converts lecture audio recordings into compre
 ## 📄 License
 
 This project is for educational purposes.
+
+## 📚 Study Pack Export
+
+You can regenerate the printable study pack for the current sections with one command:
+
+```bash
+python tools/generate_study_pack.py
+```
+
+This rebuilds the Methods, Evaluation, and Ethics summary PDFs, flashcard PDFs, Anki `.apkg` decks, and the combined master study pack with table of contents from the markdown sources in `data/summaries/`.
+
+Open the new **📦 Study Packs** page in Streamlit to download the generated PDFs and decks directly from the app.
 
 ---
 

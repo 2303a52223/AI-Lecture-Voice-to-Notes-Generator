@@ -4,21 +4,45 @@ Sidebar Component - Navigation and status information
 import streamlit as st
 from utils.state_manager import get_state_manager
 
+DEFAULT_APP_BACKGROUND = "#F8FAFC"
+
+
+def _apply_theme_overrides(state_manager):
+    """Apply global visual overrides from user settings."""
+    saved_background = state_manager.get_settings().get("app_background_color", DEFAULT_APP_BACKGROUND)
+    if "app_background_color" not in st.session_state:
+        st.session_state.app_background_color = saved_background
+
+    app_background_color = st.session_state.get("app_background_color", DEFAULT_APP_BACKGROUND)
+    st.markdown(
+        f"""
+        <style>
+            :root {{
+                --app-bg-base: {app_background_color};
+                --app-bg-end: {app_background_color};
+            }}
+        </style>
+        """,
+        unsafe_allow_html=True,
+    )
+
 def render_sidebar():
     """Render application sidebar"""
+    state_manager = get_state_manager()
+    _apply_theme_overrides(state_manager)
     
     with st.sidebar:
         # Logo and title
         st.markdown("""
-        <div style="text-align: center; padding: 1rem 0;">
-            <h1 style="color: #667eea; margin: 0;">🎓</h1>
-            <h3 style="margin: 0.5rem 0;">Lecture Notes</h3>
-            <p style="color: #666; font-size: 0.9rem;">AI-Powered Study Assistant</p>
+        <div class="sidebar-hero">
+            <h1 class="brand-emoji">🎓</h1>
+            <h3 class="brand-title">Lecture Notes</h3>
+            <p class="brand-sub">AI-Powered Study Assistant</p>
         </div>
         """, unsafe_allow_html=True)
         
         st.divider()
-        
+
         # Navigation info
         st.markdown("### 📚 Quick Navigation")
         st.markdown("""
@@ -27,14 +51,13 @@ def render_sidebar():
         - **Summary**: Generate notes
         - **Quiz**: Test knowledge
         - **Analytics**: Track progress
+        - **Study Packs**: Download PDFs and Anki decks
         - **Settings**: Configure app
         """)
         
         st.divider()
         
         # Current lecture info
-        state_manager = get_state_manager()
-        
         if st.session_state.get('current_lecture_id'):
             lecture = state_manager.get_lecture(st.session_state.current_lecture_id)
             if lecture:
@@ -45,7 +68,7 @@ def render_sidebar():
                     from utils.helpers import format_duration
                     st.caption(f"⏱️ Duration: {format_duration(lecture['duration'])}")
                 
-                if st.button("Clear Current", use_container_width=True):
+                if st.button("Clear Current", width="stretch"):
                     st.session_state.current_lecture_id = None
                     st.session_state.transcript = None
                     st.session_state.summary = None
@@ -75,19 +98,19 @@ def render_sidebar():
         # Quick actions
         st.markdown("### ⚡ Quick Actions")
         
-        if st.button("🆕 New Lecture", use_container_width=True):
+        if st.button("🆕 New Lecture", width="stretch"):
             st.session_state.current_lecture_id = None
             st.session_state.transcript = None
             st.switch_page("pages/01_📤_Upload.py")
         
-        if st.button("📚 View All", use_container_width=True):
+        if st.button("📚 View All", width="stretch"):
             st.switch_page("pages/05_📈_Analytics.py")
         
         st.divider()
         
         # Footer
         st.markdown("""
-        <div style="text-align: center; padding: 1rem 0; color: #888; font-size: 0.8rem;">
+        <div class="sidebar-footer">
             <p>Powered by Local AI</p>
             <p>🔒 100% Private • No API Keys</p>
         </div>
@@ -95,19 +118,20 @@ def render_sidebar():
 
 def render_minimal_sidebar():
     """Render minimal sidebar for pages that need more space"""
+    state_manager = get_state_manager()
+    _apply_theme_overrides(state_manager)
     
     with st.sidebar:
         st.markdown("""
-        <div style="text-align: center; padding: 1rem 0;">
-            <h1 style="color: #667eea; margin: 0;">🎓</h1>
-            <h3 style="margin: 0.5rem 0;">Lecture Notes</h3>
+        <div class="sidebar-hero">
+            <h1 class="brand-emoji">🎓</h1>
+            <h3 class="brand-title">Lecture Notes</h3>
         </div>
         """, unsafe_allow_html=True)
         
         st.divider()
         
         # Essential navigation only
-        state_manager = get_state_manager()
         analytics = state_manager.get_analytics()
         
         st.metric("Total Lectures", analytics.get('total_lectures', 0))
@@ -115,7 +139,7 @@ def render_minimal_sidebar():
         st.divider()
         
         st.markdown("""
-        <div style="text-align: center; font-size: 0.8rem; color: #888;">
+        <div class="sidebar-footer">
             🔒 100% Private & Local
         </div>
         """, unsafe_allow_html=True)

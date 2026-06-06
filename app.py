@@ -17,8 +17,9 @@ Version: 1.0.0
 """
 
 import streamlit as st
+from pathlib import Path
 from components.sidebar import render_sidebar
-from components.cards import feature_card, info_card, stat_card
+from components.cards_enhanced import feature_card, info_card, gradient_divider
 from utils.state_manager import init_session_state, get_state_manager
 
 try:
@@ -35,8 +36,24 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
+# Load custom CSS
+css_file = Path(__file__).parent / "assets" / "style.css"
+if css_file.exists():
+    with open(css_file) as f:
+        st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
+
 # Initialize session state
 init_session_state()
+
+# Dark mode toggle
+col1, col2 = st.columns([10, 1])
+with col2:
+    if st.toggle("🌙", key="dark_mode_main", help="Toggle dark mode"):
+        st.markdown("""
+        <script>
+        document.documentElement.setAttribute('data-theme', 'dark');
+        </script>
+        """, unsafe_allow_html=True)
 
 # Render sidebar
 render_sidebar()
@@ -44,14 +61,14 @@ render_sidebar()
 # Main content
 st.markdown("""
 <div style="text-align: center; padding: 2rem 0;">
-    <h1 style="font-size: 3.5rem; color: #667eea; margin: 0;">
-        🎓 Lecture Voice-to-Notes Generator
-    </h1>
-    <p style="font-size: 1.3rem; color: #666; margin: 1rem 0;">
+    <h1>🎓 Lecture Voice-to-Notes Generator</h1>
+    <p style="font-size: 1.3rem; color: var(--text-light); margin: 1rem 0;">
         Transform lectures into comprehensive study materials with AI
     </p>
 </div>
 """, unsafe_allow_html=True)
+
+gradient_divider()
 
 st.divider()
 
@@ -81,7 +98,7 @@ with col3:
         "Create practice quizzes and flashcards to test your knowledge"
     )
 
-st.divider()
+gradient_divider()
 
 # Getting started section
 st.markdown("### 🚀 Getting Started")
@@ -101,7 +118,7 @@ with col1:
     All processing happens locally on your device - completely private!
     """)
     
-    if st.button("📤 Upload Your First Lecture", type="primary", use_container_width=True):
+    if st.button("📤 Upload Your First Lecture", type="primary", width="stretch"):
         st.switch_page("pages/01_📤_Upload.py")
 
 with col2:
@@ -126,7 +143,7 @@ with col2:
     else:
         st.warning("⚠️ Models will download on first use (~1GB)")
 
-st.divider()
+gradient_divider()
 
 # Statistics overview
 state_manager = get_state_manager()
@@ -135,43 +152,23 @@ analytics = state_manager.get_analytics()
 if analytics.get('total_lectures', 0) > 0:
     st.markdown("### 📊 Your Progress")
     
-    col1, col2, col3, col4 = st.columns(4)
+    from utils.helpers import format_duration
+    from utils.file_handler import FileHandler
     
-    with col1:
-        stat_card(
-            analytics.get('total_lectures', 0),
-            "Lectures Processed",
-            "#667eea"
-        )
+    file_handler = FileHandler()
+    storage = file_handler.get_storage_info()
+    total_duration = analytics.get('total_duration', 0)
+    duration_str = format_duration(total_duration) if total_duration > 0 else "0s"
     
-    with col2:
-        from utils.helpers import format_duration
-        total_duration = analytics.get('total_duration', 0)
-        duration_str = format_duration(total_duration) if total_duration > 0 else "0s"
-        stat_card(
-            duration_str,
-            "Total Duration",
-            "#764ba2"
-        )
+    from components.cards_enhanced import stat_group
+    stat_group([
+        {'label': 'Lectures Processed', 'value': analytics.get('total_lectures', 0), 'icon': '📚'},
+        {'label': 'Total Duration', 'value': duration_str, 'icon': '⏱️'},
+        {'label': 'Quizzes Taken', 'value': analytics.get('total_quizzes', 0), 'icon': '❓'},
+        {'label': 'Storage Used', 'value': storage.get('total_size', '0 KB'), 'icon': '💾'},
+    ])
     
-    with col3:
-        stat_card(
-            analytics.get('total_quizzes', 0),
-            "Quizzes Taken",
-            "#f093fb"
-        )
-    
-    with col4:
-        from utils.file_handler import FileHandler
-        file_handler = FileHandler()
-        storage = file_handler.get_storage_info()
-        stat_card(
-            storage.get('total_size', '0 KB'),
-            "Storage Used",
-            "#f5576c"
-        )
-    
-    st.divider()
+    gradient_divider()
     
     # Recent lectures
     lectures = state_manager.get_all_lectures()
@@ -192,27 +189,27 @@ if analytics.get('total_lectures', 0) > 0:
                 
                 col1, col2, col3, col4 = st.columns(4)
                 with col1:
-                    if st.button("📝 Transcript", key=f"trans_{lecture['id']}", use_container_width=True):
+                    if st.button("📝 Transcript", key=f"trans_{lecture['id']}", width="stretch"):
                         st.session_state.current_lecture_id = lecture['id']
                         st.switch_page("pages/02_📝_Transcript.py")
                 with col2:
-                    if st.button("📊 Summary", key=f"sum_{lecture['id']}", use_container_width=True):
+                    if st.button("📊 Summary", key=f"sum_{lecture['id']}", width="stretch"):
                         st.session_state.current_lecture_id = lecture['id']
                         st.switch_page("pages/03_📊_Summary.py")
                 with col3:
-                    if st.button("❓ Quiz", key=f"quiz_{lecture['id']}", use_container_width=True):
+                    if st.button("❓ Quiz", key=f"quiz_{lecture['id']}", width="stretch"):
                         st.session_state.current_lecture_id = lecture['id']
                         st.switch_page("pages/04_❓_Quiz.py")
                 with col4:
-                    if st.button("🗑️ Delete", key=f"del_{lecture['id']}", use_container_width=True):
+                    if st.button("🗑️ Delete", key=f"del_{lecture['id']}", width="stretch"):
                         if state_manager.delete_lecture(lecture['id']):
                             st.success("Deleted!")
                             st.rerun()
         
-        if st.button("📈 View All Lectures", use_container_width=True):
+        if st.button("📈 View All Lectures", width="stretch"):
             st.switch_page("pages/05_📈_Analytics.py")
 
-st.divider()
+gradient_divider()
 
 # Information cards
 col1, col2 = st.columns(2)
@@ -230,6 +227,17 @@ with col2:
         "Uses open-source AI models like Whisper and BART. No subscriptions, no usage limits, no hidden costs.",
         "💰"
     )
+
+gradient_divider()
+
+# Footer
+st.markdown("""
+<div style="text-align: center; padding: 2rem 1rem; opacity: 0.7;">
+    <p style="margin: 0; font-size: 0.9rem; color: var(--text-light);">
+        Built with ❤️ using Streamlit & AI | © 2026 Lecture Voice-to-Notes Generator
+    </p>
+</div>
+""", unsafe_allow_html=True)
 
 st.divider()
 
@@ -319,19 +327,19 @@ st.markdown("### 📚 Quick Links")
 col1, col2, col3, col4 = st.columns(4)
 
 with col1:
-    if st.button("📤 Upload", use_container_width=True):
+    if st.button("📤 Upload", width="stretch"):
         st.switch_page("pages/01_📤_Upload.py")
 
 with col2:
-    if st.button("📈 Analytics", use_container_width=True):
+    if st.button("📈 Analytics", width="stretch"):
         st.switch_page("pages/05_📈_Analytics.py")
 
 with col3:
-    if st.button("⚙️ Settings", use_container_width=True):
+    if st.button("⚙️ Settings", width="stretch"):
         st.switch_page("pages/06_⚙️_Settings.py")
 
 with col4:
-    if st.button("ℹ️ About", use_container_width=True):
+    if st.button("ℹ️ About", width="stretch"):
         st.info("Lecture Voice-to-Notes Generator v1.0.0")
 
 st.divider()

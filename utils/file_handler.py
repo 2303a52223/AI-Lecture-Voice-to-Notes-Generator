@@ -85,6 +85,80 @@ class FileHandler:
         except Exception as e:
             st.error(f"Error saving summary: {e}")
             return False, None
+
+    def export_notes_as_pdf(self, content, title, output_path=None):
+        """Export notes as PDF"""
+        try:
+            from processors.export_handler import ExportHandler
+            handler = ExportHandler()
+            pdf_bytes = handler.export_to_pdf(content, title, output_path)
+            return pdf_bytes
+        except Exception as e:
+            st.error(f"Error exporting PDF: {e}")
+            return None
+
+    def export_notes_as_markdown(self, content, title, output_path=None):
+        """Export notes as Markdown"""
+        try:
+            if output_path:
+                Path(output_path).parent.mkdir(parents=True, exist_ok=True)
+                with open(output_path, 'w', encoding='utf-8') as f:
+                    f.write(content)
+                return output_path
+            return content
+        except Exception as e:
+            st.error(f"Error exporting Markdown: {e}")
+            return None
+
+    def export_notes_as_txt(self, content, title, output_path=None):
+        """Export notes as plain text"""
+        try:
+            from processors.export_handler import ExportHandler
+            handler = ExportHandler()
+            txt_content = handler.export_to_txt(content)
+
+            if output_path:
+                Path(output_path).parent.mkdir(parents=True, exist_ok=True)
+                with open(output_path, 'w', encoding='utf-8') as f:
+                    f.write(txt_content)
+                return output_path
+
+            return txt_content
+        except Exception as e:
+            st.error(f"Error exporting TXT: {e}")
+            return None
+
+    def export_flashcards_anki(self, flashcards, deck_name="Lecture Notes"):
+        """Export flashcards as Anki package"""
+        try:
+            from processors.quiz_generator import QuizGenerator
+            generator = QuizGenerator()
+            apkg_bytes = generator.export_to_anki(flashcards, deck_name)
+            return apkg_bytes
+        except Exception as e:
+            st.error(f"Error exporting Anki package: {e}")
+            return None
+
+    def export_flashcards_csv(self, flashcards, output_path=None):
+        """Export flashcards as CSV"""
+        try:
+            from processors.quiz_generator import QuizGenerator
+            import csv
+            from pathlib import Path
+
+            generator = QuizGenerator()
+            csv_content = generator.export_flashcards_csv(flashcards)
+
+            if output_path:
+                Path(output_path).parent.mkdir(parents=True, exist_ok=True)
+                with open(output_path, 'w', encoding='utf-8', newline='') as f:
+                    f.write(csv_content)
+                return output_path
+
+            return csv_content
+        except Exception as e:
+            st.error(f"Error exporting CSV: {e}")
+            return None
     
     def load_summary(self, lecture_id):
         """Load summary from JSON file"""

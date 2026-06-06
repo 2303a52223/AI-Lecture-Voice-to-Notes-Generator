@@ -3,6 +3,7 @@ Transcript Page - View and interact with lecture transcripts
 """
 import streamlit as st
 from pathlib import Path
+import html
 from utils.state_manager import StateManager
 from utils.helpers import format_duration
 from components.sidebar import render_sidebar
@@ -28,9 +29,17 @@ state_manager = StateManager()
 # Sidebar
 render_sidebar()
 
-# Main content
-st.title("📝 Transcript")
-st.markdown("View and interact with your lecture transcripts.")
+# Main content - Hero
+st.markdown(
+    """
+    <section class='page-hero'>
+        <div class='page-hero-badge'>📝 Transcript</div>
+        <h1>View & Interact with Transcripts</h1>
+        <p class='page-hero-copy'>Read the complete transcription of your lectures with full text search and segment playback.</p>
+    </section>
+    """,
+    unsafe_allow_html=True,
+)
 
 st.divider()
 
@@ -74,17 +83,76 @@ if audio_path and Path(audio_path).exists():
     with st.expander("🎵 Audio Player", expanded=False):
         render_mini_player(audio_path)
 
+# Debug info
+with st.expander("🔧 Debug Info"):
+    st.json({
+        "lecture_id": lecture.get('id'),
+        "title": lecture.get('title'),
+        "transcript_path": lecture.get('transcript_path'),
+        "method": lecture.get('method', 'unknown'),
+        "text_length": len(lecture.get('transcript_text', '')),
+        "audio_path": lecture.get('audio_path')
+    })
+
 # Transcript content
 transcript_text = lecture.get('transcript_text', '')
 
 if not transcript_text:
-    st.warning("No transcript text available for this lecture.")
+    st.warning("⚠️ No transcript text available for this lecture.")
+    
+    # Offer re-processing
+    if st.button("🔄 Re-process Lecture", width="stretch"):
+        with st.spinner("Re-processing lecture..."):
+            try:
+                audio_path = lecture.get('audio_path', '')
+                if audio_path and Path(audio_path).exists():
+                    # Re-extract from file
+                    from processors.audio_transcriber import AudioTranscriber
+                    transcriber = AudioTranscriber()
+                    
+                    # Re-transcribe
+                    result = transcriber.transcribe(audio_path)
+                    
+                    # Update database
+                    db = state_manager.load_database()
+                    for lec in db['lectures']:
+                        if lec['id'] == lecture['id']:
+                            lec['transcript_text'] = result.get('text', '')
+                            lec['duration'] = result.get('duration', 0)
+                            break
+                    state_manager.save_database(db)
+                    
+                    st.success("✅ Re-processing complete! Please refresh the page.")
+                    st.rerun()
+                else:
+                    # Try document extraction instead
+                    ext = Path(audio_path).suffix.lower() if audio_path else ''
+                    if ext in ['.pdf', '.pptx', '.docx']:
+                        from processors.document_extractor import route_file
+                        result = route_file(audio_path, ocr=True)
+                        
+                        # Update database
+                        db = state_manager.load_database()
+                        for lec in db['lectures']:
+                            if lec['id'] == lecture['id']:
+                                lec['transcript_text'] = result.get('text', '')
+                                break
+                        state_manager.save_database(db)
+                        
+                        st.success("✅ Re-extraction complete! Please refresh the page.")
+                        st.rerun()
+                    else:
+                        st.error("❌ Cannot re-process: file not found or unsupported format")
+            except Exception as e:
+                st.error(f"❌ Re-processing failed: {e}")
+    
     st.stop()
 
 # Tabs for different views
 tab1, tab2, tab3 = st.tabs(["📄 Full Text", "📋 Segments", "🔍 Search"])
 
 with tab1:
+    st.markdown("<div class='pack-card'>", unsafe_allow_html=True)
     st.subheader("Full Transcript")
     
     # Display options
@@ -93,16 +161,18 @@ with tab1:
         font_size = st.slider("Font Size", 12, 24, 16, key="transcript_font")
     
     # Display transcript
+    safe_transcript_text = html.escape(transcript_text)
     st.markdown(
-        f'<div style="font-size: {font_size}px; line-height: 1.8; padding: 1rem; '
-        f'background-color: #f8f9fa; border-radius: 8px;">{transcript_text}</div>',
+        f'<div class="summary-body" style="font-size: {font_size}px; line-height: 1.8;">{safe_transcript_text}</div>',
         unsafe_allow_html=True
     )
     
     # Copy button
     st.code(transcript_text, language=None)
+    st.markdown("</div>", unsafe_allow_html=True)
 
 with tab2:
+    st.markdown("<div class='pack-card'>", unsafe_allow_html=True)
     st.subheader("Transcript Segments")
     
     # Try to load segments from transcript file
@@ -127,16 +197,17 @@ with tab2:
             start_fmt = f"{int(start//60):02d}:{int(start%60):02d}"
             end_fmt = f"{int(end//60):02d}:{int(end%60):02d}"
             
+            safe_text = html.escape(text)
             st.markdown(
-                f'<div style="padding: 0.5rem; margin: 0.3rem 0; border-left: 3px solid #667eea; '
-                f'padding-left: 1rem;">'
-                f'<span style="color: #667eea; font-weight: bold;">[{start_fmt} → {end_fmt}]</span> '
-                f'{text}</div>',
+                f'<div class="summary-paragraph">'
+                f'<span style="color: var(--primary-dark); font-weight: bold;">[{start_fmt} → {end_fmt}]</span> '
+                f'{safe_text}</div>',
                 unsafe_allow_html=True
             )
     else:
         st.info("Segment data not available. Showing full text instead.")
         st.text(transcript_text)
+    st.markdown("</div>", unsafe_allow_html=True)
 
 with tab3:
     st.subheader("Search Transcript")
@@ -195,7 +266,7 @@ with col1:
         data=transcript_text,
         file_name=f"{lecture.get('title', 'transcript')}.txt",
         mime="text/plain",
-        use_container_width=True
+        width="stretch"
     )
 
 with col2:
@@ -215,5 +286,5 @@ with col2:
         data=timestamped_text,
         file_name=f"{lecture.get('title', 'transcript')}_timestamped.txt",
         mime="text/plain",
-        use_container_width=True
+        width="stretch"
     )

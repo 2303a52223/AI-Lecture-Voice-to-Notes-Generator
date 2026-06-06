@@ -212,3 +212,56 @@ def format_file_size(size_bytes: int | float) -> str:
         return f"{size_bytes:.1f} PB"
     except:
         return "Unknown"
+
+def pre_clean_text(text: str) -> str:
+    """Deterministic pre-cleaning: remove fillers, repetitions, noise markers"""
+    import re
+
+    # Remove common filler words and phrases
+    fillers = [
+        r'\b(um|uh|ah|er|like|you know|sort of|kind of|basically|literally|actually)\b',
+        r'\b(and)\s+\1+\b',  # Remove repeated "and and"
+        r'\b(the)\s+\1+\b',  # Remove repeated "the the"
+        r'\b(a)\s+\1+\b',  # Remove repeated "a a"
+        r'\[.*?\]',  # Remove bracketed annotations like [inaudible]
+        r'\(inaudible\)',
+        r'\(unintelligible\)',
+        r'\(background noise\)',
+        r'\(crosstalk\)',
+    ]
+
+    for pattern in fillers:
+        text = re.sub(pattern, '', text, flags=re.IGNORECASE)
+
+    # Normalize whitespace
+    text = re.sub(r'\s+', ' ', text)  # Multiple spaces to single
+    text = re.sub(r'\s+([.,:;!?])', r'\1', text)  # Space before punctuation
+
+    return text.strip()
+
+def apply_glossary(text: str, glossary: dict) -> str:
+    """Apply glossary mapping to replace terms with correct versions"""
+    if not glossary:
+        return text
+
+    for incorrect, correct in glossary.items():
+        pattern = r'\b' + re.escape(incorrect) + r'\b'
+        text = re.sub(pattern, correct, text, flags=re.IGNORECASE)
+
+    return text
+
+def load_glossary_from_csv(csv_text: str) -> dict:
+    """Load glossary from CSV text (format: incorrect,correct)"""
+    import csv
+    import io
+
+    glossary = {}
+    try:
+        reader = csv.reader(io.StringIO(csv_text))
+        for row in reader:
+            if len(row) >= 2:
+                glossary[row[0].strip()] = row[1].strip()
+    except Exception:
+        pass
+
+    return glossary

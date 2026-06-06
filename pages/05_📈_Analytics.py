@@ -27,9 +27,17 @@ state_manager = StateManager()
 # Sidebar
 render_sidebar()
 
-# Main content
-st.title("📈 Analytics")
-st.markdown("Analyze your lecture content with detailed text statistics and visualizations.")
+# Main content - Hero
+st.markdown(
+    """
+    <section class='page-hero'>
+        <div class='page-hero-badge'>📈 Analytics</div>
+        <h1>Analyze Your Lectures</h1>
+        <p class='page-hero-copy'>Deep dive into text statistics, readability analysis, word frequency, and learning insights with interactive visualizations.</p>
+    </section>
+    """,
+    unsafe_allow_html=True,
+)
 
 st.divider()
 
@@ -93,6 +101,8 @@ if view_mode == "📊 Single Lecture":
     # Display analysis results
     st.subheader("📊 Text Statistics")
     
+    st.markdown("<div class='pack-card'>", unsafe_allow_html=True)
+    
     col1, col2, col3, col4 = st.columns(4)
     
     with col1:
@@ -155,7 +165,7 @@ if view_mode == "📊 Single Lecture":
             # Fallback to table
             import pandas as pd
             df = pd.DataFrame(word_freq[:20])
-            st.dataframe(df, use_container_width=True)
+            st.dataframe(df, width="stretch")
     
     st.divider()
     
@@ -177,6 +187,8 @@ if view_mode == "📊 Single Lecture":
         render_text_stats_chart(analysis)
     except:
         pass
+    
+    st.markdown("</div>", unsafe_allow_html=True)
 
 else:
     # Dashboard view
@@ -230,4 +242,4 @@ else:
         })
     
     df = pd.DataFrame(comparison_data)
-    st.dataframe(df, use_container_width=True)
+    st.dataframe(df, width="stretch")
