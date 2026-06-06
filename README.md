@@ -1,6 +1,6 @@
 # 🎓 Lecture Voice-to-Notes Generator
 
-An AI-powered study assistant that converts lecture audio recordings into comprehensive study materials — transcripts, summaries, quizzes, and analytics.
+An AI-powered study assistant that turns lecture recordings and course notes into transcripts, summaries, quizzes, study packs, and analytics.
 
 ![Streamlit](https://img.shields.io/badge/Streamlit-FF4B4B?style=for-the-badge&logo=streamlit&logoColor=white)
 ![Python](https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white)
@@ -8,11 +8,13 @@ An AI-powered study assistant that converts lecture audio recordings into compre
 
 ## ✨ Features
 
-- **🎤 Audio Transcription** — Upload lecture audio files (MP3, WAV, M4A, OGG, FLAC, WebM) and get accurate transcriptions powered by AssemblyAI's universal speech models with automatic language detection.
-- **📝 Smart Summaries** — AI-generated summaries and study notes in multiple styles (concise, detailed, bullet points).
-- **❓ Quiz Generation** — Auto-generated quiz questions (multiple choice, true/false, fill-in-the-blank) to test your understanding.
-- **📊 Text Analytics** — Readability scores, word frequency analysis, key term extraction, and more.
-- **📈 Analytics Dashboard** — Track your learning progress across all uploaded lectures.
+- **🎤 Audio Transcription** — Upload lecture audio files (MP3, WAV, M4A, OGG, FLAC, WebM) and get accurate transcriptions powered by AssemblyAI's speech models with automatic language detection.
+- **📝 Smart Summaries** — Generate concise, detailed, or bullet-style study notes from transcripts and text.
+- **❓ Quiz Generation** — Create multiple-choice, true/false, and fill-in-the-blank questions to test understanding.
+- **📊 Text Analytics** — Review readability scores, word frequency, and key-term extraction.
+- **📦 Study Packs** — Download PDFs and Anki decks from the Study Packs page, with safe clear/delete controls for generated artifacts.
+- **📈 Analytics Dashboard** — Track learning progress across uploaded lectures.
+- **🎨 Polished UI** — Multi-page Streamlit app with a cleaner sidebar, modern cards, and a focused study workspace.
 
 ## 🚀 Getting Started
 
@@ -45,6 +47,16 @@ An AI-powered study assistant that converts lecture audio recordings into compre
 
 5. Open your browser at **http://localhost:8501**
 
+### Host on your network
+
+To make the app reachable from other devices on your LAN, run:
+
+```bash
+streamlit run app.py --server.address 0.0.0.0 --server.port 8501
+```
+
+Streamlit will print a local URL and a network URL for your machine.
+
 ## 📁 Project Structure
 
 ```
@@ -65,7 +77,7 @@ An AI-powered study assistant that converts lecture audio recordings into compre
 │   ├── 04_❓_Quiz.py       # Take auto-generated quizzes
 │   ├── 05_📈_Analytics.py  # Learning analytics dashboard
 │   ├── 06_⚙️_Settings.py   # App configuration
-│   └── 07_📦_Study_Packs.py # Download PDFs and Anki decks
+│   └── 07_📦_Study_Packs.py # Download, regenerate, and clear study packs
 ├── processors/             # Core processing modules
 │   ├── transcriber.py      # AssemblyAI transcription
 │   ├── summarizer.py       # Text summarization
@@ -114,6 +126,12 @@ python tools/generate_study_pack.py
 This rebuilds the Methods, Evaluation, and Ethics summary PDFs, flashcard PDFs, Anki `.apkg` decks, and the combined master study pack with table of contents from the markdown sources in `data/summaries/`.
 
 Open the new **📦 Study Packs** page in Streamlit to download the generated PDFs and decks directly from the app.
+
+You can also use the delete controls on that page to remove generated study-pack artifacts when you want to start fresh.
+
+## ☁️ Streamlit Cloud
+
+This repository can also be deployed to Streamlit Community Cloud. If a page uses a newer Streamlit widget option on one environment, prefer the compatibility-safe version used in this repo so local and cloud deployments behave the same way.
 
 ---
 
