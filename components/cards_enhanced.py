@@ -2,11 +2,12 @@
 Enhanced Cards Component - Modern glassmorphism design with animations
 """
 from typing import Any, Callable, Optional
+import textwrap
 import streamlit as st
 
 def info_card(title: str, content: str, icon: str = "ℹ️") -> None:
     """Display a modern information card with glassmorphism"""
-    st.markdown(f"""
+    st.markdown(textwrap.dedent(f"""
     <div class="card-glass animate-fade" style="
         background: linear-gradient(135deg, rgba(99, 102, 241, 0.9) 0%, rgba(236, 72, 153, 0.9) 100%);
         border-radius: 16px; 
@@ -28,12 +29,12 @@ def info_card(title: str, content: str, icon: str = "ℹ️") -> None:
             </div>
         </div>
     </div>
-    """, unsafe_allow_html=True)
+    """).strip(), unsafe_allow_html=True)
 
 def metric_card(label: str, value: Any, delta: Optional[float] = None, icon: str = "📊") -> None:
     """Display a modern metric card with animations"""
     delta_html = ""
-    if delta:
+    if delta is not None:
         delta_color = "#10B981" if delta > 0 else "#EF4444"
         delta_text = f"+" if delta > 0 else ""
         delta_html = f"""
@@ -51,7 +52,7 @@ def metric_card(label: str, value: Any, delta: Optional[float] = None, icon: str
         </div>
         """
     
-    st.markdown(f"""
+    st.markdown(textwrap.dedent(f"""
     <div class="metric-card hover-lift animate-fade" style="
         background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(248, 250, 252, 0.95) 100%);
         border-radius: 16px;
@@ -85,11 +86,11 @@ def metric_card(label: str, value: Any, delta: Optional[float] = None, icon: str
             </div>
         </div>
     </div>
-    """, unsafe_allow_html=True)
+    """).strip(), unsafe_allow_html=True)
 
 def feature_card(icon: str, title: str, description: str) -> None:
     """Display a modern feature card"""
-    st.markdown(f"""
+    st.markdown(textwrap.dedent(f"""
     <div class="card-glass hover-lift animate-fade" style="
         border: 2px solid transparent;
         background: linear-gradient(white, white) padding-box,
@@ -124,7 +125,7 @@ def feature_card(icon: str, title: str, description: str) -> None:
             {description}
         </p>
     </div>
-    """, unsafe_allow_html=True)
+    """).strip(), unsafe_allow_html=True)
 
 def stat_group(stats: list[dict[str, Any]]) -> None:
     """Display a group of stat cards in a grid"""
@@ -144,7 +145,7 @@ def activity_timeline(activities: list[dict[str, Any]]) -> None:
     
     for i, activity in enumerate(activities):
         is_last = i == len(activities) - 1
-        timeline_html += f"""
+        timeline_html += textwrap.dedent(f"""
         <div style="
             position: relative;
             margin-bottom: 2rem;
@@ -180,14 +181,14 @@ def activity_timeline(activities: list[dict[str, Any]]) -> None:
                 </p>
             </div>
         </div>
-        """
+        """)
     
     timeline_html += '</div>'
     st.markdown(timeline_html, unsafe_allow_html=True)
 
 def progress_card(title: str, progress: float, description: str = "") -> None:
     """Display a progress card with animation"""
-    st.markdown(f"""
+    st.markdown(textwrap.dedent(f"""
     <div class="card-glass animate-fade" style="padding: 1.5rem;">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
             <h4 style="margin: 0; color: #1E293B; font-size: 1rem;">
@@ -225,15 +226,15 @@ def progress_card(title: str, progress: float, description: str = "") -> None:
         
         {f'<p style="margin: 0; font-size: 0.9rem; color: #64748B;">{description}</p>' if description else ''}
     </div>
-    """, unsafe_allow_html=True)
+    """).strip(), unsafe_allow_html=True)
 
 def gradient_divider() -> None:
     """Display a gradient divider"""
-    st.markdown("""
+    st.markdown(textwrap.dedent("""
     <div style="
         height: 2px;
         background: linear-gradient(90deg, #6366F1 0%, #EC4899 50%, transparent 100%);
         margin: 2rem 0;
         border-radius: 2px;
     "></div>
-    """, unsafe_allow_html=True)
+    """).strip(), unsafe_allow_html=True)
