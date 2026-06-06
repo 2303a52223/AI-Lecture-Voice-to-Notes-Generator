@@ -166,6 +166,15 @@ def file_block(title: str, description: str, files: list[tuple[str, str]]) -> No
         path = data_dir / filename
         with cols[idx % 3]:
             _render_download_button(label, path)
+            # Show per-file delete control when delete mode is enabled
+            if globals().get("ENABLE_DELETE", False) and path.exists():
+                if st.button("🗑️ Delete", key=f"del_{path.stem}"):
+                    try:
+                        path.unlink()
+                        st.success(f"Deleted {path.name}")
+                        st.experimental_rerun()
+                    except Exception as e:
+                        st.error(f"Failed to delete {path.name}: {e}")
 
     st.markdown("</div>", unsafe_allow_html=True)
 
@@ -209,6 +218,26 @@ st.download_button(
 st.markdown("</div>", unsafe_allow_html=True)
 
 st.caption("Includes the master pack plus Methods, Evaluation, and Ethics PDFs and Anki decks.")
+
+# Delete controls
+ENABLE_DELETE = st.checkbox("Enable delete controls (show delete buttons)", value=False)
+if ENABLE_DELETE:
+    st.markdown("<div class='info-banner'>Delete mode is ON — use carefully. Deletions are permanent.</div>", unsafe_allow_html=True)
+    if st.checkbox("I confirm I want to permanently delete all generated study pack files"):
+        if st.button("🧹 Delete all generated study pack files (permanent)"):
+            deleted = 0
+            failed = 0
+            for _, filenames in DOWNLOAD_GROUPS:
+                for filename in filenames:
+                    path = data_dir / filename
+                    if path.exists():
+                        try:
+                            path.unlink()
+                            deleted += 1
+                        except Exception:
+                            failed += 1
+            st.success(f"Deleted {deleted} files; {failed} failures")
+            st.experimental_rerun()
 
 with st.expander("📊 Artifact status"):
     rows = _artifact_rows()
