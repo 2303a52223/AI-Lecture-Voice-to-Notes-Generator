@@ -213,13 +213,13 @@ with tab2:
                 unsafe_allow_html=True
             )
     else:
-            st.info("Segment data not available. Showing full text instead.")
+        st.info("Segment data not available. Showing full text instead.")
         st.text(transcript_text)
     st.markdown("</div>", unsafe_allow_html=True)
 
 with tab3:
-        st.markdown("<div class='transcript-search-panel'>", unsafe_allow_html=True)
-        st.markdown("<div class='transcript-section-title'>Search Transcript</div>", unsafe_allow_html=True)
+    st.markdown("<div class='transcript-search-panel'>", unsafe_allow_html=True)
+    st.markdown("<div class='transcript-section-title'>Search Transcript</div>", unsafe_allow_html=True)
     
     search_query = st.text_input(
         "🔍 Search for keywords or phrases",
@@ -275,7 +275,7 @@ with col1:
         data=transcript_text,
         file_name=f"{lecture.get('title', 'transcript')}.txt",
         mime="text/plain",
-        width="stretch"
+        use_container_width=True
     )
 
 with col2:
@@ -295,5 +295,7 @@ with col2:
         data=timestamped_text,
         file_name=f"{lecture.get('title', 'transcript')}_timestamped.txt",
         mime="text/plain",
-        width="stretch"
+        use_container_width=True
     )
+
+st.markdown("</div>", unsafe_allow_html=True)
