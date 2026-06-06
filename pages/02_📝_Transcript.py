@@ -32,7 +32,7 @@ render_sidebar()
 # Main content - Hero
 st.markdown(
     """
-    <section class='page-hero'>
+    <section class='page-hero transcript-hero'>
         <div class='page-hero-badge'>📝 Transcript</div>
         <h1>View & Interact with Transcripts</h1>
         <p class='page-hero-copy'>Read the complete transcription of your lectures with full text search and segment playback.</p>
@@ -42,6 +42,8 @@ st.markdown(
 )
 
 st.divider()
+
+st.markdown("<div class='transcript-shell'>", unsafe_allow_html=True)
 
 # Get lectures
 lectures = state_manager.get_all_lectures()
@@ -67,13 +69,19 @@ st.divider()
 # Lecture info
 col1, col2, col3 = st.columns(3)
 with col1:
+    st.markdown("<div class='transcript-meta-chip'>", unsafe_allow_html=True)
     st.metric("Language", lecture.get('language', 'Unknown').upper())
+    st.markdown("</div>", unsafe_allow_html=True)
 with col2:
     duration = lecture.get('duration', 0)
+    st.markdown("<div class='transcript-meta-chip'>", unsafe_allow_html=True)
     st.metric("Duration", format_duration(duration) if duration else "N/A")
+    st.markdown("</div>", unsafe_allow_html=True)
 with col3:
     word_count = len(lecture.get('transcript_text', '').split())
+    st.markdown("<div class='transcript-meta-chip'>", unsafe_allow_html=True)
     st.metric("Words", f"{word_count:,}")
+    st.markdown("</div>", unsafe_allow_html=True)
 
 st.divider()
 
@@ -101,7 +109,7 @@ if not transcript_text:
     st.warning("⚠️ No transcript text available for this lecture.")
     
     # Offer re-processing
-    if st.button("🔄 Re-process Lecture", width="stretch"):
+    if st.button("🔄 Re-process Lecture", use_container_width=True):
         with st.spinner("Re-processing lecture..."):
             try:
                 audio_path = lecture.get('audio_path', '')
@@ -152,8 +160,8 @@ if not transcript_text:
 tab1, tab2, tab3 = st.tabs(["📄 Full Text", "📋 Segments", "🔍 Search"])
 
 with tab1:
-    st.markdown("<div class='pack-card'>", unsafe_allow_html=True)
-    st.subheader("Full Transcript")
+    st.markdown("<div class='transcript-panel'>", unsafe_allow_html=True)
+    st.markdown("<div class='transcript-section-title'>Full Transcript</div>", unsafe_allow_html=True)
     
     # Display options
     col1, col2 = st.columns([3, 1])
@@ -163,7 +171,7 @@ with tab1:
     # Display transcript
     safe_transcript_text = html.escape(transcript_text)
     st.markdown(
-        f'<div class="summary-body" style="font-size: {font_size}px; line-height: 1.8;">{safe_transcript_text}</div>',
+        f'<div class="transcript-text" style="font-size: {font_size}px; line-height: 1.8;">{safe_transcript_text}</div>',
         unsafe_allow_html=True
     )
     
@@ -172,8 +180,8 @@ with tab1:
     st.markdown("</div>", unsafe_allow_html=True)
 
 with tab2:
-    st.markdown("<div class='pack-card'>", unsafe_allow_html=True)
-    st.subheader("Transcript Segments")
+    st.markdown("<div class='transcript-panel'>", unsafe_allow_html=True)
+    st.markdown("<div class='transcript-section-title'>Transcript Segments</div>", unsafe_allow_html=True)
     
     # Try to load segments from transcript file
     transcript_path = lecture.get('transcript_path', '')
@@ -199,18 +207,19 @@ with tab2:
             
             safe_text = html.escape(text)
             st.markdown(
-                f'<div class="summary-paragraph">'
-                f'<span style="color: var(--primary-dark); font-weight: bold;">[{start_fmt} → {end_fmt}]</span> '
+                f'<div class="transcript-segment">'
+                f'<span style="color: var(--primary-dark); font-weight: 800;">[{start_fmt} → {end_fmt}]</span> '
                 f'{safe_text}</div>',
                 unsafe_allow_html=True
             )
     else:
-        st.info("Segment data not available. Showing full text instead.")
+            st.info("Segment data not available. Showing full text instead.")
         st.text(transcript_text)
     st.markdown("</div>", unsafe_allow_html=True)
 
 with tab3:
-    st.subheader("Search Transcript")
+        st.markdown("<div class='transcript-search-panel'>", unsafe_allow_html=True)
+        st.markdown("<div class='transcript-section-title'>Search Transcript</div>", unsafe_allow_html=True)
     
     search_query = st.text_input(
         "🔍 Search for keywords or phrases",
@@ -232,14 +241,13 @@ with tab3:
             import re
             highlighted = re.sub(
                 f'({re.escape(search_query)})',
-                r'<mark style="background-color: #fff3cd; padding: 2px 4px; border-radius: 3px;">\1</mark>',
+                r'<mark class="transcript-mark">\1</mark>',
                 transcript_text,
                 flags=re.IGNORECASE
             )
             
             st.markdown(
-                f'<div style="font-size: 14px; line-height: 1.8; padding: 1rem; '
-                f'background-color: #f8f9fa; border-radius: 8px;">{highlighted}</div>',
+                f'<div class="transcript-match" style="font-size: 14px;">{highlighted}</div>',
                 unsafe_allow_html=True
             )
             
@@ -253,6 +261,7 @@ with tab3:
                         st.markdown(f"**[{start_fmt}]** {segment['text']}")
         else:
             st.warning(f"No matches found for '{search_query}'")
+    st.markdown("</div>", unsafe_allow_html=True)
 
 # Download section
 st.divider()
