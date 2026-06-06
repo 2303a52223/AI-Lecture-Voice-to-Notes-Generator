@@ -73,12 +73,12 @@ def _render_download_button(label: str, path: Path, primary: bool = False) -> No
             data=path.read_bytes(),
             file_name=path.name,
             mime="application/octet-stream",
-            width="stretch",
+            use_container_width=True,
             key=f"dl_{path.stem}",
         )
         st.caption(f"{path.name} · {path.stat().st_size / 1024:.0f} KB")
     else:
-        st.button(label, disabled=True, width="stretch", key=f"missing_{path.stem}")
+        st.button(label, disabled=True, use_container_width=True, key=f"missing_{path.stem}")
         st.caption(f"Missing: {path.name}")
 
 render_sidebar()
@@ -204,7 +204,7 @@ st.download_button(
     data=zip_bytes,
     file_name="Text-Image-GenAI_study_packs.zip",
     mime="application/zip",
-    width="stretch",
+    use_container_width=True,
 )
 st.markdown("</div>", unsafe_allow_html=True)
 
