@@ -51,6 +51,8 @@ def metric_card(label: str, value: Any, delta: Optional[float] = None, icon: str
             {delta_text}{delta}% from last week
         </div>
         """
+        # Normalize indentation to avoid Markdown treating it as a code block
+        delta_html = textwrap.dedent(delta_html).strip()
     
     st.markdown(textwrap.dedent(f"""
     <div class="metric-card hover-lift animate-fade" style="
