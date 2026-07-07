@@ -66,7 +66,7 @@ def _group_ready_count(filenames: list[str]) -> int:
     return sum(1 for filename in filenames if (data_dir / filename).exists())
 
 
-def _render_download_button(label: str, path: Path, primary: bool = False) -> None:
+def _render_download_button(label: str, path: Path, key_suffix: str, primary: bool = False) -> None:
     if path.exists():
         st.download_button(
             label,
@@ -74,11 +74,11 @@ def _render_download_button(label: str, path: Path, primary: bool = False) -> No
             file_name=path.name,
             mime="application/octet-stream",
             use_container_width=True,
-            key=f"dl_{path.stem}",
+            key=f"dl_{key_suffix}",
         )
         st.caption(f"{path.name} · {path.stat().st_size / 1024:.0f} KB")
     else:
-        st.button(label, disabled=True, use_container_width=True, key=f"missing_{path.stem}")
+        st.button(label, disabled=True, use_container_width=True, key=f"missing_{key_suffix}")
         st.caption(f"Missing: {path.name}")
 
 render_sidebar()
@@ -147,6 +147,7 @@ def _artifact_rows() -> list[dict]:
 
 def file_block(title: str, description: str, files: list[tuple[str, str]]) -> None:
     available = _group_ready_count([filename for _, filename in files])
+    block_key = title.lower().replace(" ", "_")
     st.markdown(
         f"""
         <div class='pack-card'>
@@ -165,7 +166,7 @@ def file_block(title: str, description: str, files: list[tuple[str, str]]) -> No
     for idx, (label, filename) in enumerate(files):
         path = data_dir / filename
         with cols[idx % 3]:
-            _render_download_button(label, path)
+            _render_download_button(label, path, f"{block_key}_{idx}_{path.stem}")
             # Show per-file delete control when delete mode is enabled
             if globals().get("ENABLE_DELETE", False) and path.exists():
                 if st.button("🗑️ Delete", key=f"del_{path.stem}"):

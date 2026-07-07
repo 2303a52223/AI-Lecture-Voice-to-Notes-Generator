@@ -2,6 +2,7 @@
 Settings Page - Application settings and configuration
 """
 import streamlit as st
+import importlib.util
 from pathlib import Path
 from utils.state_manager import StateManager
 from utils.file_handler import FileHandler
@@ -125,14 +126,14 @@ with tab2:
     )
     
     # Check model availability
-    try:
-        import transformers  # type: ignore[import-unresolved]
-        st.success(f"✅ Transformers library available (v{transformers.__version__})")
-    except ImportError:
+    transformers_spec = importlib.util.find_spec("transformers")
+    if transformers_spec is None:
         st.warning(
             "⚠️ Transformers library not installed. Using extractive summarization.\n\n"
             "Install with: `pip install transformers torch`"
         )
+    else:
+        st.success("✅ Transformers library available")
 
 st.markdown("</div>", unsafe_allow_html=True)
 
