@@ -5,10 +5,45 @@ import streamlit as st
 from utils.state_manager import get_state_manager
 
 DEFAULT_APP_BACKGROUND = "#F8FAFC"
+DEFAULT_APP_DARK_BACKGROUND = "#0F172A"
 
 
 def _apply_theme_overrides(state_manager):
     """Apply global visual overrides from user settings."""
+    theme_mode = st.session_state.get("theme_mode", "light")
+
+    if theme_mode == "dark":
+        st.markdown(
+            f"""
+            <style>
+                :root {{
+                    --bg-light: #0F172A;
+                    --bg-white: #111827;
+                    --bg-dark: #0F172A;
+                    --bg-darker: #020617;
+                    --app-bg-base: {DEFAULT_APP_DARK_BACKGROUND};
+                    --app-bg-end: #111827;
+                    --text-dark: #F8FAFC;
+                    --text-light: #CBD5E1;
+                    --text-muted: #94A3B8;
+                    --surface: rgba(15, 23, 42, 0.82);
+                    --surface-strong: rgba(15, 23, 42, 0.94);
+                    --border-soft: rgba(148, 163, 184, 0.18);
+                }}
+
+                body {{
+                    background:
+                        radial-gradient(circle at top left, rgba(99, 102, 241, 0.14), transparent 28%),
+                        radial-gradient(circle at top right, rgba(236, 72, 153, 0.12), transparent 30%),
+                        linear-gradient(180deg, var(--app-bg-base) 0%, var(--app-bg-end) 100%);
+                    color: var(--text-dark);
+                }}
+            </style>
+            """,
+            unsafe_allow_html=True,
+        )
+        return
+
     saved_background = state_manager.get_settings().get("app_background_color", DEFAULT_APP_BACKGROUND)
     if "app_background_color" not in st.session_state:
         st.session_state.app_background_color = saved_background

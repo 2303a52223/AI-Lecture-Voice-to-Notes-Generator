@@ -42,12 +42,7 @@ state_manager = StateManager()
 render_sidebar()
 
 # Dark mode toggle in sidebar
-if st.sidebar.checkbox("🌙 Dark Mode", key="dark_mode_toggle"):
-    st.markdown("""
-    <script>
-    document.documentElement.setAttribute('data-theme', 'dark');
-    </script>
-    """, unsafe_allow_html=True)
+st.session_state.theme_mode = "dark" if st.sidebar.checkbox("🌙 Dark Mode", key="theme_mode_dark") else "light"
 
 # Header
 st.markdown("""

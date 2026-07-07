@@ -42,12 +42,7 @@ init_session_state()
 # Dark mode toggle
 col1, col2 = st.columns([10, 1])
 with col2:
-    if st.toggle("🌙", key="dark_mode_main", help="Toggle dark mode"):
-        st.markdown("""
-        <script>
-        document.documentElement.setAttribute('data-theme', 'dark');
-        </script>
-        """, unsafe_allow_html=True)
+    st.session_state.theme_mode = "dark" if st.toggle("🌙", key="theme_mode_dark", help="Toggle dark mode") else "light"
 
 # Render sidebar
 render_sidebar()
