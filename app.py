@@ -22,12 +22,6 @@ from components.sidebar import render_sidebar
 from components.cards_enhanced import feature_card, info_card, gradient_divider
 from utils.state_manager import init_session_state, get_state_manager
 
-try:
-    import torch  # type: ignore[import-unresolved]
-    _torch_available = True
-except ImportError:
-    _torch_available = False
-
 # Page configuration
 st.set_page_config(
     page_title="Lecture Voice-to-Notes Generator",
@@ -81,7 +75,7 @@ with col1:
     feature_card(
         "🎤",
         "Speech-to-Text",
-        "Convert lecture audio to accurate text transcripts using OpenAI Whisper"
+        "Convert lecture audio to accurate text transcripts using local Whisper models"
     )
 
 with col2:
@@ -126,7 +120,14 @@ with col2:
     st.markdown("#### 🖥️ System Status")
     
     # Check GPU
-    gpu_available = _torch_available and torch.cuda.is_available()  # type: ignore[possibly-undefined]
+    try:
+        import torch  # type: ignore[import-unresolved]
+
+        gpu_available = torch.cuda.is_available()
+    except ImportError:
+        gpu_available = False
+        torch = None  # type: ignore[assignment]
+
     st.session_state.gpu_available = gpu_available
     
     if gpu_available:

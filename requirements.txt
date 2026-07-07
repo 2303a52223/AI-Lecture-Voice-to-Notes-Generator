@@ -3,7 +3,6 @@ streamlit>=1.28.0
 
 # Speech-to-Text (Local & Cloud)
 faster-whisper>=1.0.0
-assemblyai>=0.17.0
 
 # Audio Processing
 pydub>=0.25.0
@@ -14,7 +13,6 @@ PyMuPDF>=1.23.0
 pdfplumber>=0.11.0
 pypdf>=6.0.0
 pytesseract>=0.3.0
-opencv-python>=4.8.0
 python-pptx>=1.0.0
 python-docx>=0.8.0
 lxml>=4.9.0
@@ -23,7 +21,6 @@ lxml>=4.9.0
 transformers>=4.34.0
 torch>=2.0.0
 nltk>=3.8.0
-spacy>=3.7.0
 yake>=0.4.0
 rake-nltk>=1.0.0
 textstat>=0.7.0

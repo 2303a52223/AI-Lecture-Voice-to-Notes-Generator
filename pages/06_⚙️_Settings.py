@@ -60,21 +60,25 @@ tab1, tab2, tab3, tab4, tab5, tab6 = st.tabs([
 with tab1:
     st.markdown("<div class='pack-card'>", unsafe_allow_html=True)
     st.subheader("Transcription Settings")
-    
-    # AssemblyAI configuration
-    st.markdown("### AssemblyAI API")
-    
-    st.success("✅ AssemblyAI API key is configured.")
+
     st.info(
-        "Using **AssemblyAI** for transcription with:\n"
-        "- **universal-3-pro** (en, es, de, fr, it, pt)\n"
-        "- **universal-2** (all other languages)\n"
-        "- **Automatic language detection** enabled"
+        "This app uses **local faster-whisper** for transcription. No API key is required and all audio stays on the device unless you export it elsewhere."
     )
-    
-    # Verify API key
-    api_key_display = "5116de72...fcdd6"
-    st.caption(f"🔑 API Key: {api_key_display}")
+
+    model_size = st.selectbox(
+        "Model size (larger = more accurate but slower)",
+        options=['tiny', 'base', 'small', 'medium', 'large'],
+        index=2,
+        help="Smaller models are faster, larger models are more accurate"
+    )
+    st.session_state.whisper_model = model_size
+
+    device = st.radio(
+        "Processing device",
+        options=["Auto-detect", "CPU", "GPU"],
+        index=0
+    )
+    st.session_state.whisper_device = device
     
     st.divider()
     
@@ -84,7 +88,7 @@ with tab1:
         "Default Language",
         options=['Auto-detect', 'English', 'Spanish', 'French', 'German', 'Chinese', 'Japanese'],
         index=0,
-        help="Set the default language for transcription. AssemblyAI also supports auto-detection."
+        help="Set the default language for transcription. Auto-detect is recommended for mixed-language lectures."
     )
     st.session_state.default_language = default_language
 
@@ -184,51 +188,6 @@ with tab4:
     
     st.divider()
     
-    st.markdown("### 🎤 Transcription Model")
-    
-    transcriber_choice = st.radio(
-        "Select transcriber",
-        options=["Local (faster-whisper)", "Online API (AssemblyAI)"],
-        index=0,
-        help="Choose between local offline transcription or cloud-based API"
-    )
-    st.session_state.transcriber_choice = transcriber_choice
-    
-    if transcriber_choice == "Local (faster-whisper)":
-        st.info(
-            "✅ Using **faster-whisper** for local, offline transcription\n\n"
-            "- **Privacy**: All processing happens locally\n"
-            "- **Speed**: GPU/CPU fallback supported\n"
-            "- **Models**: tiny, base, small, medium, large\n"
-            "- **Download**: Models cached locally under `models/`"
-        )
-        
-        model_size = st.selectbox(
-            "Model size (larger = more accurate but slower)",
-            options=['tiny', 'base', 'small', 'medium', 'large'],
-            index=2,  # default to 'small'
-            help="Smaller models are faster, larger models are more accurate"
-        )
-        st.session_state.whisper_model = model_size
-        
-        # Device selection
-        device = st.radio(
-            "Processing device",
-            options=["Auto-detect", "CPU", "GPU"],
-            index=0
-        )
-        st.session_state.whisper_device = device
-        
-    else:
-        st.info(
-            "Using **AssemblyAI API** for transcription\n\n"
-            "- **Models**: universal-3-pro, universal-2\n"
-            "- **Languages**: Supports all major languages\n"
-            "- **Requires**: Internet connection and API key"
-        )
-    
-    st.divider()
-    
     st.markdown("### 📊 Model Cache")
     
     # Model cache info
@@ -296,6 +255,10 @@ with tab5:
     
     lectures = state_manager.get_all_lectures()
     st.markdown(f"- **Total Lectures**: {len(lectures)}")
+
+    st.warning(
+        "On Streamlit Community Cloud, the local `data/` folder is ephemeral. Uploaded files, transcripts, and summaries can be lost on restart or redeploy."
+    )
     
     st.divider()
     
@@ -397,7 +360,6 @@ with st.expander("ℹ️ System Information"):
     # Heavy packages
     st.markdown("### ML Packages")
     ml_packages = {
-        'assemblyai': 'assemblyai',
         'transformers': 'transformers'
     }
     

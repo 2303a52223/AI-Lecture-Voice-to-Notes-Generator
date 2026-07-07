@@ -4,11 +4,11 @@ An AI-powered study assistant that turns lecture recordings and course notes int
 
 ![Streamlit](https://img.shields.io/badge/Streamlit-FF4B4B?style=for-the-badge&logo=streamlit&logoColor=white)
 ![Python](https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white)
-![AssemblyAI](https://img.shields.io/badge/AssemblyAI-000000?style=for-the-badge&logo=assemblyai&logoColor=white)
+![Local AI](https://img.shields.io/badge/Local%20AI-0F766E?style=for-the-badge&logo=vercel&logoColor=white)
 
 ## ✨ Features
 
-- **🎤 Audio Transcription** — Upload lecture audio files (MP3, WAV, M4A, OGG, FLAC, WebM) and get accurate transcriptions powered by AssemblyAI's speech models with automatic language detection.
+- **🎤 Audio Transcription** — Upload lecture audio files (MP3, WAV, M4A, OGG, FLAC, WebM) and get accurate transcriptions powered by local faster-whisper models with automatic language detection.
 - **📝 Smart Summaries** — Generate concise, detailed, or bullet-style study notes from transcripts and text.
 - **❓ Quiz Generation** — Create multiple-choice, true/false, and fill-in-the-blank questions to test understanding.
 - **📊 Text Analytics** — Review readability scores, word frequency, and key-term extraction.
@@ -79,7 +79,7 @@ Streamlit will print a local URL and a network URL for your machine.
 │   ├── 06_⚙️_Settings.py   # App configuration
 │   └── 07_📦_Study_Packs.py # Download, regenerate, and clear study packs
 ├── processors/             # Core processing modules
-│   ├── transcriber.py      # AssemblyAI transcription
+│   ├── audio_transcriber.py # Local faster-whisper transcription
 │   ├── summarizer.py       # Text summarization
 │   ├── quiz_generator.py   # Quiz question generation
 │   └── text_analyzer.py    # Text analysis & readability
@@ -98,7 +98,7 @@ Streamlit will print a local URL and a network URL for your machine.
 | Component | Technology |
 |-----------|-----------|
 | Frontend | Streamlit |
-| Transcription | AssemblyAI API |
+| Transcription | faster-whisper |
 | NLP | NLTK, TextStat |
 | Visualization | Plotly, Matplotlib |
 | Data | Pandas, JSON |
@@ -106,7 +106,7 @@ Streamlit will print a local URL and a network URL for your machine.
 ## 📸 How It Works
 
 1. **Upload** your lecture audio file on the Upload page
-2. The app **transcribes** the audio using AssemblyAI
+2. The app **transcribes** the audio locally using faster-whisper
 3. A **summary** and study notes are automatically generated
 4. **Quiz questions** are created from the lecture content
 5. View **analytics** and readability insights
@@ -135,4 +135,4 @@ This repository can also be deployed to Streamlit Community Cloud. If a page use
 
 ---
 
-Built with ❤️ using Streamlit & AssemblyAI
+Built with ❤️ using Streamlit & local AI

@@ -131,7 +131,7 @@ with col2:
         help="Choose how the summary should be formatted"
     )
 
-st.caption("🔗 Powered by AssemblyAI (universal-3-pro + universal-2 models)")
+st.caption("🔗 Powered by local faster-whisper transcription")
 
 # Language mapping
 language_map = {
@@ -435,7 +435,7 @@ else:
     with col1:
         info_card(
             "🎤 Transcription",
-            "Accurate speech-to-text conversion using AssemblyAI's universal models"
+            "Accurate speech-to-text conversion using local faster-whisper models"
         )
     
     with col2:

@@ -5,8 +5,8 @@ This wrapper tries to use `faster-whisper` for local, offline transcription.
 If `faster-whisper` is not installed, the class will raise an informative error
 when `transcribe()` is called.
 
-Returned transcription format matches the AssemblyAI-based transcriber used
-elsewhere in the project: dict with keys `text`, `segments`, `language`, `duration`.
+Returned transcription format matches the rest of the app: a dict with keys
+`text`, `segments`, `language`, `duration`.
 """
 from pathlib import Path
 import json
