@@ -258,11 +258,7 @@ with st.expander("🤔 How does it work?"):
     **❓ Quiz Generation: Custom NLP Pipeline**
     - Uses NLTK for text processing
     - Multiple question types (MCQ, True/False, Fill-in-blank)
-<<<<<<< HEAD
-    - Intelligent distractor generation  
-=======
     - Intelligent distractor generation
->>>>>>> 8bde74a17c6cfcf6d98366c2df5856aefa789153
     
     **📊 Text Analysis: NLTK + TextStat**
     - Readability scoring
