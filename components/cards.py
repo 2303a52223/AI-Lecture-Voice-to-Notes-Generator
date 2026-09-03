@@ -5,6 +5,17 @@ These complement cards_enhanced.py with additional card types
 from typing import Any, Callable, Optional
 import streamlit as st
 
+__all__ = [
+    "feature_card",
+    "info_card",
+    "lecture_card",
+    "metric_card",
+    "quiz_question_card",
+    "result_card",
+    "stat_card",
+    "summary_card",
+]
+
 def lecture_card(lecture: dict[str, Any], on_click_callback: Optional[Callable[..., Any]] = None) -> None:
     """Display a lecture card"""
     st.markdown(f"""
