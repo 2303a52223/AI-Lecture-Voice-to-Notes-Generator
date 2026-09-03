@@ -1,15 +1,9 @@
 """
-<<<<<<< HEAD
 Cards Component - Reusable card layouts (legacy support)
 These complement cards_enhanced.py with additional card types
-=======
-Cards Component - Reusable card layouts
->>>>>>> 8bde74a17c6cfcf6d98366c2df5856aefa789153
 """
 from typing import Any, Callable, Optional
 import streamlit as st
-
-<<<<<<< HEAD
 
 def lecture_card(lecture: dict[str, Any], on_click_callback: Optional[Callable[..., Any]] = None) -> None:
     """Display a lecture card"""
@@ -71,10 +65,6 @@ def result_card(title: str, content: str, card_type: str = "info") -> None:
 
 def summary_card(title: str, content: str, icon: str = "📝") -> None:
     """Display a summary card"""
-=======
-def info_card(title: str, content: str, icon: str = "ℹ️") -> None:
-    """Display an information card"""
->>>>>>> 8bde74a17c6cfcf6d98366c2df5856aefa789153
     st.markdown(f"""
     <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
                 border-radius: 12px; padding: 1.5rem; margin: 1rem 0;
@@ -82,17 +72,11 @@ def info_card(title: str, content: str, icon: str = "ℹ️") -> None:
         <h3 style="color: white; margin: 0 0 0.5rem 0;">
             {icon} {title}
         </h3>
-<<<<<<< HEAD
         <p style="color: white; margin: 0; opacity: 0.95; line-height: 1.6;">
-=======
-        <p style="color: white; margin: 0; opacity: 0.95;">
->>>>>>> 8bde74a17c6cfcf6d98366c2df5856aefa789153
             {content}
         </p>
     </div>
     """, unsafe_allow_html=True)
-
-<<<<<<< HEAD
 
 def info_card(title: str, content: str, icon: str = "ℹ️") -> None:
     """Display an information card (alias to cards_enhanced version)"""
@@ -104,8 +88,7 @@ def metric_card(label: str, value: Any, delta: Optional[float] = None, icon: str
     """Display a metric card (alias to cards_enhanced version)"""
     from components.cards_enhanced import metric_card as metric_card_enhanced
     metric_card_enhanced(label, value, delta, icon)
-=======
-def metric_card(label: str, value: Any, delta: Optional[float] = None, icon: str = "📊") -> None:
+def legacy_metric_card(label: str, value: Any, delta: Optional[float] = None, icon: str = "📊") -> None:
     """Display a metric card"""
     delta_html = ""
     if delta:
@@ -235,4 +218,3 @@ def stat_card(value: Any, label: str, color: str = "#667eea") -> None:
         <p style="color: white; margin: 0; opacity: 0.9;">{label}</p>
     </div>
     """, unsafe_allow_html=True)
->>>>>>> 8bde74a17c6cfcf6d98366c2df5856aefa789153

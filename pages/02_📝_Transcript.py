@@ -49,7 +49,6 @@ st.markdown("<div class='transcript-shell'>", unsafe_allow_html=True)
 lectures = state_manager.get_all_lectures()
 
 if not lectures:
-<<<<<<< HEAD
     st.markdown(
         """
         <div class='transcript-empty-state'>
@@ -64,16 +63,11 @@ if not lectures:
         """,
         unsafe_allow_html=True,
     )
-=======
-    st.info("📤 No lectures found. Upload a lecture first!")
->>>>>>> 8bde74a17c6cfcf6d98366c2df5856aefa789153
     st.page_link("pages/01_📤_Upload.py", label="Go to Upload", icon="📤")
     st.stop()
 
 # Lecture selector
 lecture_titles = [l.get('title', f"Lecture {l.get('id', '?')}") for l in lectures]
-<<<<<<< HEAD
-
 st.markdown("<div class='pack-card transcript-control-card'>", unsafe_allow_html=True)
 st.markdown(
     f"""
@@ -99,20 +93,6 @@ st.markdown("</div>", unsafe_allow_html=True)
 
 lecture = lectures[selected_idx]
 st.session_state.current_lecture_id = lecture.get('id')
-
-=======
-selected_idx = st.selectbox(
-    "Select Lecture",
-    range(len(lectures)),
-    format_func=lambda x: lecture_titles[x]
-)
-
-lecture = lectures[selected_idx]
-st.session_state.current_lecture_id = lecture.get('id')
-
-st.divider()
-
->>>>>>> 8bde74a17c6cfcf6d98366c2df5856aefa789153
 # Lecture info
 col1, col2, col3 = st.columns(3)
 with col1:
@@ -138,20 +118,6 @@ if audio_path and Path(audio_path).exists():
     with st.expander("🎵 Audio Player", expanded=False):
         render_mini_player(audio_path)
 
-<<<<<<< HEAD
-=======
-# Debug info
-with st.expander("🔧 Debug Info"):
-    st.json({
-        "lecture_id": lecture.get('id'),
-        "title": lecture.get('title'),
-        "transcript_path": lecture.get('transcript_path'),
-        "method": lecture.get('method', 'unknown'),
-        "text_length": len(lecture.get('transcript_text', '')),
-        "audio_path": lecture.get('audio_path')
-    })
-
->>>>>>> 8bde74a17c6cfcf6d98366c2df5856aefa789153
 # Transcript content
 transcript_text = lecture.get('transcript_text', '')
 
@@ -247,11 +213,7 @@ with tab2:
             pass
     
     if segments:
-<<<<<<< HEAD
         for index, segment in enumerate(segments):
-=======
-        for segment in segments:
->>>>>>> 8bde74a17c6cfcf6d98366c2df5856aefa789153
             start = segment.get('start', 0)
             end = segment.get('end', 0)
             text = segment.get('text', '')
@@ -260,19 +222,12 @@ with tab2:
             end_fmt = f"{int(end//60):02d}:{int(end%60):02d}"
             
             safe_text = html.escape(text)
-<<<<<<< HEAD
             segment_class = "transcript-segment transcript-segment-alt" if index % 2 else "transcript-segment"
             st.markdown(
                 f'<div class="{segment_class}">'
                 f'<div class="transcript-segment-meta">[{start_fmt} → {end_fmt}]</div>'
                 f'<div class="transcript-segment-text">{safe_text}</div>'
                 f'</div>',
-=======
-            st.markdown(
-                f'<div class="transcript-segment">'
-                f'<span style="color: var(--primary-dark); font-weight: 800;">[{start_fmt} → {end_fmt}]</span> '
-                f'{safe_text}</div>',
->>>>>>> 8bde74a17c6cfcf6d98366c2df5856aefa789153
                 unsafe_allow_html=True
             )
     else:
@@ -327,7 +282,6 @@ with tab3:
     st.markdown("</div>", unsafe_allow_html=True)
 
 # Download section
-<<<<<<< HEAD
 st.markdown("<div class='pack-card transcript-download-card'>", unsafe_allow_html=True)
 st.markdown(
     """
@@ -340,10 +294,6 @@ st.markdown(
     """,
     unsafe_allow_html=True,
 )
-=======
-st.divider()
-st.subheader("📥 Download")
->>>>>>> 8bde74a17c6cfcf6d98366c2df5856aefa789153
 
 col1, col2 = st.columns(2)
 
@@ -367,11 +317,6 @@ with col2:
         timestamped_text = '\n'.join(formatted)
     else:
         timestamped_text = transcript_text
-<<<<<<< HEAD
-
-=======
-    
->>>>>>> 8bde74a17c6cfcf6d98366c2df5856aefa789153
     st.download_button(
         "⏱️ Download with Timestamps",
         data=timestamped_text,
@@ -381,7 +326,6 @@ with col2:
     )
 
 st.markdown("</div>", unsafe_allow_html=True)
-<<<<<<< HEAD
 
 # Debug info
 with st.expander("🔧 Debug Info"):
@@ -395,5 +339,3 @@ with st.expander("🔧 Debug Info"):
     })
 
 st.markdown("</div>", unsafe_allow_html=True)
-=======
->>>>>>> 8bde74a17c6cfcf6d98366c2df5856aefa789153

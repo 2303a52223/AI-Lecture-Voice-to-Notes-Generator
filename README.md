@@ -1,10 +1,7 @@
 # 🎓 Lecture Voice-to-Notes Generator
 
-<<<<<<< HEAD
 An AI-powered study assistant that transforms lecture recordings and course materials into comprehensive learning resources: transcripts, summaries, interactive quizzes, study packs, and learning analytics.
-=======
 An AI-powered study assistant that turns lecture recordings and course notes into transcripts, summaries, quizzes, study packs, and analytics.
->>>>>>> 8bde74a17c6cfcf6d98366c2df5856aefa789153
 
 ![Streamlit](https://img.shields.io/badge/Streamlit-FF4B4B?style=for-the-badge&logo=streamlit&logoColor=white)
 ![Python](https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white)
@@ -12,7 +9,6 @@ An AI-powered study assistant that turns lecture recordings and course notes int
 
 ## ✨ Features
 
-<<<<<<< HEAD
 - **🎤 Audio Transcription** — Upload lecture audio files (MP3, WAV, M4A, OGG, FLAC, WebM) and receive accurate transcriptions using local **faster-whisper** AI models with automatic language detection. No API keys required.
 - **📝 Smart Summaries** — Generate concise, detailed, or bullet-point study notes from transcripts and documents with customizable summary styles.
 - **❓ Quiz Generation** — Automatically create multiple-choice, true/false, and fill-in-the-blank questions to test comprehension and retention.
@@ -31,7 +27,6 @@ An AI-powered study assistant that turns lecture recordings and course notes int
 ### Installation
 
 1. **Install dependencies**
-=======
 - **🎤 Audio Transcription** — Upload lecture audio files (MP3, WAV, M4A, OGG, FLAC, WebM) and get accurate transcriptions powered by local faster-whisper models with automatic language detection.
 - **📝 Smart Summaries** — Generate concise, detailed, or bullet-style study notes from transcripts and text.
 - **❓ Quiz Generation** — Create multiple-choice, true/false, and fill-in-the-blank questions to test understanding.
@@ -55,26 +50,21 @@ An AI-powered study assistant that turns lecture recordings and course notes int
    ```
 
 2. **Install dependencies**
->>>>>>> 8bde74a17c6cfcf6d98366c2df5856aefa789153
    ```bash
    pip install -r requirements.txt
    ```
 
-<<<<<<< HEAD
 2. **Run the application**
-=======
 3. **Download NLTK data**
    ```bash
    python setup_nltk.py
    ```
 
 4. **Run the app**
->>>>>>> 8bde74a17c6cfcf6d98366c2df5856aefa789153
    ```bash
    streamlit run app.py
    ```
 
-<<<<<<< HEAD
 3. **Access the app**
    - Open your browser to **http://localhost:8501**
    - The app will load with the 📤 Upload page ready for your first lecture
@@ -82,28 +72,22 @@ An AI-powered study assistant that turns lecture recordings and course notes int
 ### Run on Your Local Network
 
 To access the app from other devices on your network:
-=======
 5. Open your browser at **http://localhost:8501**
 
 ### Host on your network
 
 To make the app reachable from other devices on your LAN, run:
->>>>>>> 8bde74a17c6cfcf6d98366c2df5856aefa789153
 
 ```bash
 streamlit run app.py --server.address 0.0.0.0 --server.port 8501
 ```
 
-<<<<<<< HEAD
 The terminal will display both local and network URLs for accessing the app.
-=======
 Streamlit will print a local URL and a network URL for your machine.
->>>>>>> 8bde74a17c6cfcf6d98366c2df5856aefa789153
 
 ## 📁 Project Structure
 
 ```
-<<<<<<< HEAD
 .
 ├── app.py                          # Main Streamlit application entry point
 ├── requirements.txt                # Python dependencies (30+ packages)
@@ -222,7 +206,6 @@ All dependencies are installed via `pip install -r requirements.txt`:
 ### Generate Study Packs
 
 Rebuild printable study materials from markdown sources:
-=======
 ├── app.py                  # Main Streamlit application
 ├── requirements.txt        # Python dependencies
 ├── setup_nltk.py           # NLTK data downloader
@@ -281,13 +264,11 @@ This project is for educational purposes.
 ## 📚 Study Pack Export
 
 You can regenerate the printable study pack for the current sections with one command:
->>>>>>> 8bde74a17c6cfcf6d98366c2df5856aefa789153
 
 ```bash
 python tools/generate_study_pack.py
 ```
 
-<<<<<<< HEAD
 This creates:
 - High-quality PDFs with formatting and styling
 - Anki `.apkg` decks for spaced repetition learning
@@ -374,7 +355,6 @@ Found a bug or have a feature idea? We'd love your input!
 **Built with ❤️ using Streamlit, NLTK, and local AI**
 
 *Helping students learn smarter, not harder.*
-=======
 This rebuilds the Methods, Evaluation, and Ethics summary PDFs, flashcard PDFs, Anki `.apkg` decks, and the combined master study pack with table of contents from the markdown sources in `data/summaries/`.
 
 Open the new **📦 Study Packs** page in Streamlit to download the generated PDFs and decks directly from the app.
@@ -388,4 +368,3 @@ This repository can also be deployed to Streamlit Community Cloud. If a page use
 ---
 
 Built with ❤️ using Streamlit & local AI
->>>>>>> 8bde74a17c6cfcf6d98366c2df5856aefa789153
