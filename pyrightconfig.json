@@ -1,0 +1,26 @@
+{
+  "pythonVersion": "3.11",
+  "pythonPlatform": "Windows",
+  "typeCheckingMode": "basic",
+  "stubPath": "./stubs",
+  "venvPath": ".",
+  "include": [
+    "app.py",
+    "pages",
+    "components",
+    "processors",
+    "utils",
+    "tools"
+  ],
+  "exclude": [
+    "**/node_modules",
+    "**/__pycache__",
+    "data",
+    "logs"
+  ],
+  "reportMissingImports": false,
+  "reportMissingTypeStubs": false,
+  "reportPrivateUsage": false,
+  "reportOptionalMemberAccess": false,
+  "reportOptionalCallOperand": false
+}

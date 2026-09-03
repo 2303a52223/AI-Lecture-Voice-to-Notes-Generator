@@ -1,0 +1,72 @@
+
+    <!doctype html>
+    <html>
+    <head>
+      <meta charset='utf-8'/>
+      <title>Text-Image-GenAI_methods_summary</title>
+      <style>
+        body { font-family: Arial, Helvetica, sans-serif; margin: 24px; color: #111; max-width: 800px }
+        h1 { font-size: 18px }
+        h2 { font-size: 14px }
+      </style>
+    </head>
+    <body>
+    <h1>Text-Image-GenAI — Methods (1‑page summary)</h1>
+<p></p>
+<p>Purpose</p>
+<ul>
+<li>Build a modular pipeline that performs text→image generation and image→text captioning, enabling round‑trip evaluation and iterative improvement.</li>
+</ul>
+<p></p>
+<p>Pipeline Overview</p>
+<ul>
+<li>Components: (1) Text encoder, (2) Latent diffusion model (text→image), (3) Vision–language encoder/captioner (image→text), (4) Evaluation &amp; API layer.</li>
+<li>Data flow: Prompt → text embedding → diffusion sampling → generated image → vision encoder → caption → compare to prompt.</li>
+</ul>
+<p></p>
+<p>Modeling Details</p>
+<ul>
+<li>Latent diffusion: operates in a compressed latent space to iteratively denoise a noise tensor conditioned on text embeddings. Advantages: high fidelity, controllable via classifier‑free guidance.</li>
+<li>Vision–language encoders: BLIP/BLIP‑2 or similar transformer‑based models map images and text into a shared embedding space for captioning and semantic comparison.</li>
+<li>Conditioning &amp; control: use guidance scale and temperature parameters; classifier‑free guidance mixes conditional/unconditional denoising to trade fidelity vs diversity.</li>
+</ul>
+<p></p>
+<p>Training &amp; Objectives</p>
+<ul>
+<li>Multi‑objective loss: L(Θ) = α·L_text + β·L_img + γ·L_perc + λ·R(Θ).</li>
+<li>L_text: CLIP‑style contrastive loss to align text↔image embeddings.</li>
+<li>L_img: diffusion reconstruction/denoising loss (mean squared error in latent/noise prediction).</li>
+<li>L_perc: perceptual loss (VGG features) to preserve visual quality.</li>
+<li>R(Θ): regularization (weight decay, priors).</li>
+</ul>
+<p></p>
+<p>Evaluation &amp; Round‑Trip</p>
+<ul>
+<li>Round‑trip: generate image from prompt, caption image, then compute semantic alignment between original prompt and generated caption.</li>
+<li>Metrics: FID (image quality), CLIPScore (semantic alignment), BLEU/METEOR/ROUGE/CIDEr (caption quality).</li>
+<li>Ablations: vary model sizes, guidance scales, and captioner architectures to measure tradeoffs.</li>
+</ul>
+<p></p>
+<p>Engineering &amp; Deployment</p>
+<ul>
+<li>Modular design: decouple diffusion model, captioner, and API service (FastAPI). Allows swapping components and offline vs cloud runtimes.</li>
+<li>Efficiency: use latent-space sampling, mixed precision and caching of embeddings; batch captioning during evaluation.</li>
+<li>Scalability: expose endpoints for text→image and captioning; worker queue for heavy generation jobs.</li>
+</ul>
+<p></p>
+<p>Practical Notes</p>
+<ul>
+<li>Compute: diffusion sampling is CPU/GPU heavy; consider smaller checkpoints or low‑rank adapters for constrained environments.</li>
+<li>Ethics &amp; Safety (brief): add watermarking, content filters, and human review for sensitive outputs.</li>
+</ul>
+<p></p>
+<p>References (key models)</p>
+<ul>
+<li>Latent diffusion / Stable Diffusion family; BLIP / BLIP‑2 for captioning; CLIP for embedding alignment.</li>
+</ul>
+<p></p>
+<p>---</p>
+<p>Generated as a concise, one‑page methods summary for exam prep and quick reference.</p>
+    </body>
+    </html>
+    
