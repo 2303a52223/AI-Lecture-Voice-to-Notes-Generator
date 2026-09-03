@@ -181,8 +181,11 @@ if uploaded_file:
         
         with ProgressContext("📊 Processing Lecture", total_steps=6) as progress:
             source_kind = "audio"
+<<<<<<< HEAD
             # Type guard: saved_path is guaranteed to be str after the check above
             assert saved_path is not None
+=======
+>>>>>>> 8bde74a17c6cfcf6d98366c2df5856aefa789153
             ext = Path(saved_path).suffix.lower()
             
             # Step 1: File Extraction/Transcription

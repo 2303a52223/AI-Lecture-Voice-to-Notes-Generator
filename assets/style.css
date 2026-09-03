@@ -204,6 +204,7 @@ body {
     margin-top: 0.75rem;
 }
 
+<<<<<<< HEAD
 .transcript-control-card,
 .transcript-download-card,
 .transcript-empty-state {
@@ -215,6 +216,8 @@ body {
     margin-bottom: 0.9rem;
 }
 
+=======
+>>>>>>> 8bde74a17c6cfcf6d98366c2df5856aefa789153
 .transcript-hero {
     background:
         linear-gradient(135deg, rgba(14, 165, 233, 0.18), rgba(168, 85, 247, 0.14)),
@@ -242,12 +245,15 @@ body {
         linear-gradient(180deg, rgba(255, 255, 255, 0.92), rgba(248, 250, 252, 0.9));
 }
 
+<<<<<<< HEAD
 .transcript-panel .stSlider,
 .transcript-search-panel .stTextInput,
 .transcript-control-card .stSelectbox {
     margin-bottom: 0.4rem;
 }
 
+=======
+>>>>>>> 8bde74a17c6cfcf6d98366c2df5856aefa789153
 .transcript-section-title {
     margin: 0 0 0.9rem;
     font-size: 1.1rem;
@@ -281,6 +287,7 @@ body {
     border-radius: 16px;
     margin-bottom: 0.8rem;
     background: linear-gradient(135deg, rgba(255, 255, 255, 0.92), rgba(224, 242, 254, 0.7));
+<<<<<<< HEAD
     display: flex;
     flex-direction: column;
     gap: 0.45rem;
@@ -290,6 +297,9 @@ body {
     background: linear-gradient(135deg, rgba(255, 255, 255, 0.95), rgba(224, 242, 254, 0.78));
     border-left: 4px solid var(--primary);
     border: 1px solid rgba(14, 165, 233, 0.12);
+=======
+    border-left: 4px solid var(--primary);
+>>>>>>> 8bde74a17c6cfcf6d98366c2df5856aefa789153
     box-shadow: var(--shadow-sm);
 }
 
@@ -298,6 +308,7 @@ body {
     background: linear-gradient(135deg, rgba(255, 255, 255, 0.92), rgba(252, 231, 243, 0.68));
 }
 
+<<<<<<< HEAD
 .transcript-segment-alt {
     border-left-color: var(--accent);
     background: linear-gradient(135deg, rgba(255, 255, 255, 0.92), rgba(252, 231, 243, 0.72));
@@ -324,6 +335,8 @@ body {
     color: #4c1d95;
 }
 
+=======
+>>>>>>> 8bde74a17c6cfcf6d98366c2df5856aefa789153
 .transcript-search-box {
     background: linear-gradient(135deg, rgba(14, 165, 233, 0.08), rgba(168, 85, 247, 0.06));
     border: 1px solid rgba(14, 165, 233, 0.16);
@@ -746,6 +759,7 @@ p {
     background: linear-gradient(135deg, rgba(99, 102, 241, 0.1) 0%, rgba(236, 72, 153, 0.1) 100%);
 }
 
+<<<<<<< HEAD
 /* ===== FORM CONTROLS ===== */
 [data-testid="stSelectbox"] [data-baseweb="select"],
 [data-testid="stTextInput"] input,
@@ -805,6 +819,8 @@ p {
     color: #e9d5ff;
 }
 
+=======
+>>>>>>> 8bde74a17c6cfcf6d98366c2df5856aefa789153
 /* ===== TABS ===== */
 .stTabs [data-baseweb="tab-list"] {
     gap: 8px;

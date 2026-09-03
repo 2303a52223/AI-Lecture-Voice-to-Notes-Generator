@@ -1,4 +1,5 @@
 {
+<<<<<<< HEAD
   "pythonVersion": "3.11",
   "pythonPlatform": "Windows",
   "typeCheckingMode": "basic",
@@ -23,4 +24,16 @@
   "reportPrivateUsage": false,
   "reportOptionalMemberAccess": false,
   "reportOptionalCallOperand": false
+=======
+  "typeCheckingMode": "basic",
+  "reportMissingTypeStubs": "none",
+  "reportUnknownParameterType": "none",
+  "reportUnknownMemberType": "none",
+  "reportUnknownVariableType": "none",
+  "reportUnknownArgumentType": "none",
+  "reportMissingParameterType": "none",
+  "reportUnknownLambdaType": "none",
+  "reportMissingImports": "warning",
+  "reportPartiallyUnknown": "none"
+>>>>>>> 8bde74a17c6cfcf6d98366c2df5856aefa789153
 }
